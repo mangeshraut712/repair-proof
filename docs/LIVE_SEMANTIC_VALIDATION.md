@@ -39,7 +39,8 @@ through `repair_proof.verifier`.
 
 The direct v4 pins (`FastAPI 0.112.0`, `httpx 0.28.1`, `Pydantic 2.8.2`, and
 `Uvicorn 0.30.6`) were exercised in a separate Python 3.13.2 virtual
-environment with no broken requirements reported. All 49 tests passed, and
+environment with no broken requirements reported. In that historical v4
+direct-baseline run, all 49 tests passed, and
 the authored replay-policy evaluation completed.
 
 The full v4 lockfile could not be freshly reproduced from this environment's

@@ -21,7 +21,7 @@ closure. It used the direct versions above plus compatible locally available
 transitives. In that environment:
 
 - `python -m pip check` reported no broken requirements.
-- `python -m unittest discover -s tests -v` passed **49 tests**.
+- Historical v4 direct-baseline validation: `python -m unittest discover -s tests -v` passed **49 tests**.
 - `python -m repair_proof.evaluate` completed the 16-case authored replay
   policy evaluation.
 
@@ -46,7 +46,7 @@ portable, full-lock install.
 whose trusted index serves them. It is optional and intentionally does not
 claim fresh-install portability. Do not replace the direct baseline with a lock
 claim until a clean environment installs the full file, passes `pip check`,
-and passes the 49-test suite.
+and passes the historical 49-test suite (the current release has additional recorded-mode tests).
 
 ## Scope
 

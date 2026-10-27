@@ -13,7 +13,8 @@ The current package index did not complete a fresh Python 3.12 installation of
 the required Pydantic pin, so the optional constraints file does not claim
 portable clean-install validation. A separate local Python 3.13 project venv
 passed 49 tests and `pip check` using the available compatible dependency
-closure; product code remained unchanged. See CLEAN_INSTALL.md.
+closure; that historical v4 direct-baseline run passed 49 tests and product
+code remained unchanged. See CLEAN_INSTALL.md.
 
 After the build, one separately authorized bounded synthetic live batch was
 recorded and then semantically checked in the network-disabled verifier. Its
@@ -21,3 +22,7 @@ sanitized fixture-level evidence is in LIVE_SEMANTIC_VALIDATION.md; it does not
 represent publication, deployment, or a general repair-correctness claim.
 
 Recorded-mode UI addition: reused the exact authenticated v7 recorded proof artifact without alteration, pinned its digest and independently validated proposals/hashes/policy on load. Added no inference calls or fabricated response metadata. Prior historical proof remains separate from new execution state; desktop browser behavior was independently checked.
+
+Publication update: the reviewed source is now public at
+`https://github.com/mangeshraut712/repair-proof`. It remains undeployed and
+unsubmitted; this update does not change the historical build ledger above.
