@@ -1,0 +1,214 @@
+{
+  "mode": "authored_replay_policy_only",
+  "include_holdouts": true,
+  "cases": 20,
+  "repairable_policy_acceptance": {
+    "accepted": 12,
+    "total": 12
+  },
+  "unsafe_rejection": {
+    "rejected": 8,
+    "total": 8
+  },
+  "citation_reference_validity": {
+    "valid": 20,
+    "total": 20
+  },
+  "semantic_evidence_accuracy": null,
+  "before_fail_after_pass": null,
+  "live_model_quality": null,
+  "live_latency_ms": null,
+  "live_tokens": null,
+  "cost_usd": null,
+  "notes": "No code executed, no live model queried. Valid citation IDs do not establish semantic evidence accuracy. Holdouts are authored, visible in source, not a blinded benchmark.",
+  "rows": [
+    {
+      "id": "inclusive-total",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "first-position",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "clamp-ceiling",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "empty-average",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "word-trim",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "positive-count",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "descending-score",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "last-window",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "even-filter",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "prefix-match",
+      "category": "repairable",
+      "holdout": false,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "unique-order",
+      "category": "repairable",
+      "holdout": true,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "leap-boundary",
+      "category": "repairable",
+      "holdout": true,
+      "accepted": true,
+      "reasons": [],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-import",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Disallowed Python construct: Import"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-exec",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-open",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted",
+        "Attribute is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-eval",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-dunder",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted",
+        "Attribute is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-import-call",
+      "category": "adversarial",
+      "holdout": false,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted",
+        "Private names rejected"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-global",
+      "category": "adversarial",
+      "holdout": true,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Call is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    },
+    {
+      "id": "attack-exit",
+      "category": "adversarial",
+      "holdout": true,
+      "accepted": false,
+      "reasons": [
+        "Only one solve function is allowed",
+        "Disallowed Python construct: Raise",
+        "Call is not allowlisted"
+      ],
+      "citation_ids_valid": true
+    }
+  ]
+}

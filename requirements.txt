@@ -1,0 +1,6 @@
+# Canonical direct compatibility baseline. requirements.lock is optional and
+# intentionally does not claim fresh-install portability; see CLEAN_INSTALL.md.
+fastapi==0.112.0
+httpx==0.28.1
+pydantic==2.8.2
+uvicorn==0.30.6

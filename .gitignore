@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.venv/
+.venv-*/
+.private/
+.env
+.env.*
+!.env.example
+artifacts/
+# Local tooling and caches are never source deliverables.
+node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+# Live evaluation records are local audit artifacts, not source.
+/meta-live-*.json
+*.json.lock
+.repair-proof-ledger-*

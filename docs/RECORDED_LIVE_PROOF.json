@@ -1,0 +1,206 @@
+{
+  "artifact_type": "sanitized_recorded_live_proof",
+  "fixtures": [
+    {
+      "docker_semantic_validation": {
+        "after_exit_code": 0,
+        "before_exit_code": 1,
+        "execution_ref": "network-disabled, digest-pinned verifier; no host mounts or forwarded credentials",
+        "semantic_input_hashes_sha256": {
+          "fixture_source": "bb379e21b86eb0b8b5c0abc952bf51b7a7ac7430c7611b17a7ff34dc3ce35261",
+          "replacement": "b55a8902088fbf9b999ef1d2333ef68484b514bf677f26eb2561429abb6f9006",
+          "test_contract": "95d26f5eaf9334cfce0f3ec067b13f6b8cb11f82f3ea69525ff38a3467746dc2"
+        },
+        "status": "verified",
+        "validation_ref": "docs/LIVE_SEMANTIC_VALIDATION.md#results"
+      },
+      "evidence_refs": {
+        "evidence_text_included": false,
+        "ids": [
+          "L002",
+          "L003"
+        ],
+        "unavailable_or_unsafe_id_count": 0
+      },
+      "fixture_id": "inclusive-total",
+      "input_hashes_sha256": {
+        "source": "bb379e21b86eb0b8b5c0abc952bf51b7a7ac7430c7611b17a7ff34dc3ce35261",
+        "synthetic_evidence": "f447888d47e348c72470aef1841094e5a34acb4e5972110a67d71acdf19ec6a8",
+        "test_contract": "95d26f5eaf9334cfce0f3ec067b13f6b8cb11f82f3ea69525ff38a3467746dc2"
+      },
+      "patch_ref": {
+        "edit_count": 1,
+        "original_sha256": "bb379e21b86eb0b8b5c0abc952bf51b7a7ac7430c7611b17a7ff34dc3ce35261",
+        "path": "src/solution.py",
+        "replacement_sha256": "b55a8902088fbf9b999ef1d2333ef68484b514bf677f26eb2561429abb6f9006",
+        "replacement_text_included": true,
+        "replacement_utf8_bytes": 43
+      },
+      "recorded_parsed_proposal": {
+        "availability": "available",
+        "canonical_sha256": "6c3bd9ea0232ab656adf4bc6cc995547494bfd01bb4f4ce20c0890623460eea4",
+        "proposal": {
+          "diagnosis": "Off-by-one: sum(range(n)) sums 0..n-1, so solve(4) returns 6 instead of expected 10. Contract expects inclusive sum 0..n. Fix to sum(range(n+1)) while preserving solve(n) interface.",
+          "edits": [
+            {
+              "original_sha256": "bb379e21b86eb0b8b5c0abc952bf51b7a7ac7430c7611b17a7ff34dc3ce35261",
+              "path": "src/solution.py",
+              "replacement": "def solve(n):\n    return sum(range(n + 1))\n"
+            }
+          ],
+          "evidence_ids": [
+            "L002",
+            "L003"
+          ]
+        },
+        "screening": {
+          "independent_patch_policy_accepted": true,
+          "safe_relative_path": true,
+          "schema_validated": true,
+          "secret_or_pii_findings": 0,
+          "synthetic_fixture_only": true
+        },
+        "source": "parsed completed-live-ledger proposal; not a raw HTTP body"
+      },
+      "recorded_observed_at": null,
+      "recorded_observed_at_status": "unavailable: the completed bounded ledger does not persist a wall-clock response timestamp",
+      "recorded_policy": {
+        "accepted": true,
+        "citation_ids_valid": true,
+        "policy_reasons_included": false
+      },
+      "response_ref": {
+        "attempt_status": "measured",
+        "bounded_ledger_attempt_number": 1,
+        "parsed_policy_reviewed_proposal": "available",
+        "provider_response_id": "unavailable",
+        "raw_provider_response_body": "unavailable"
+      },
+      "usage_estimate": {
+        "billed_cost_usd": null,
+        "input_tokens": 428,
+        "latency_ms": 34777,
+        "output_tokens": 1136,
+        "reserved_usd": "0.051160",
+        "usage_cost_upper_usd": "0.005363"
+      }
+    },
+    {
+      "docker_semantic_validation": {
+        "after_exit_code": 0,
+        "before_exit_code": 1,
+        "execution_ref": "network-disabled, digest-pinned verifier; no host mounts or forwarded credentials",
+        "semantic_input_hashes_sha256": {
+          "fixture_source": "4d125ccd17cfe9dde4b4e3223b4f92218dec48d7054f2894fd58c355562f61a3",
+          "replacement": "5e00d59c91b7eccae089a96847dcf784cbe1deaf5fcda5c94d813b3fb0122bc3",
+          "test_contract": "7e94bcdea0ca86bbf9e4ba17a31d5c35f58b402fd7ff8880c222e2077251633b"
+        },
+        "status": "verified",
+        "validation_ref": "docs/LIVE_SEMANTIC_VALIDATION.md#results"
+      },
+      "evidence_refs": {
+        "evidence_text_included": false,
+        "ids": [
+          "L002",
+          "L003"
+        ],
+        "unavailable_or_unsafe_id_count": 0
+      },
+      "fixture_id": "first-position",
+      "input_hashes_sha256": {
+        "source": "4d125ccd17cfe9dde4b4e3223b4f92218dec48d7054f2894fd58c355562f61a3",
+        "synthetic_evidence": "d2a6856ec5f43049aedf1afeaee9a0181b0b9ebfa443bae9d9641d102d42fa53",
+        "test_contract": "7e94bcdea0ca86bbf9e4ba17a31d5c35f58b402fd7ff8880c222e2077251633b"
+      },
+      "patch_ref": {
+        "edit_count": 1,
+        "original_sha256": "4d125ccd17cfe9dde4b4e3223b4f92218dec48d7054f2894fd58c355562f61a3",
+        "path": "src/solution.py",
+        "replacement_sha256": "5e00d59c91b7eccae089a96847dcf784cbe1deaf5fcda5c94d813b3fb0122bc3",
+        "replacement_text_included": true,
+        "replacement_utf8_bytes": 124
+      },
+      "recorded_parsed_proposal": {
+        "availability": "available",
+        "canonical_sha256": "c87c12c13c55e26716e496bb4ddca900df9e33258f9580043ff6861f984f108b",
+        "proposal": {
+          "diagnosis": "Loop uses range(1, len(items)) so index 0 is never checked. When target is at position 0, it is skipped and a later match or -1 is returned, causing solve([7,2,7],7) to return 2 instead of 0. Fix by starting iteration at 0.",
+          "edits": [
+            {
+              "original_sha256": "4d125ccd17cfe9dde4b4e3223b4f92218dec48d7054f2894fd58c355562f61a3",
+              "path": "src/solution.py",
+              "replacement": "def solve(items, target):\n    for i in range(len(items)):\n        if items[i] == target:\n            return i\n    return -1\n"
+            }
+          ],
+          "evidence_ids": [
+            "L002",
+            "L003"
+          ]
+        },
+        "screening": {
+          "independent_patch_policy_accepted": true,
+          "safe_relative_path": true,
+          "schema_validated": true,
+          "secret_or_pii_findings": 0,
+          "synthetic_fixture_only": true
+        },
+        "source": "parsed completed-live-ledger proposal; not a raw HTTP body"
+      },
+      "recorded_observed_at": null,
+      "recorded_observed_at_status": "unavailable: the completed bounded ledger does not persist a wall-clock response timestamp",
+      "recorded_policy": {
+        "accepted": true,
+        "citation_ids_valid": true,
+        "policy_reasons_included": false
+      },
+      "response_ref": {
+        "attempt_status": "measured",
+        "bounded_ledger_attempt_number": 2,
+        "parsed_policy_reviewed_proposal": "available",
+        "provider_response_id": "unavailable",
+        "raw_provider_response_body": "unavailable"
+      },
+      "usage_estimate": {
+        "billed_cost_usd": null,
+        "input_tokens": 461,
+        "latency_ms": 33786,
+        "output_tokens": 982,
+        "reserved_usd": "0.051160",
+        "usage_cost_upper_usd": "0.004750"
+      }
+    }
+  ],
+  "fresh_api_call": false,
+  "label": "recorded prior live response; not a fresh API call",
+  "limitations": [
+    "This artifact records prior authorized responses and is not current live inference.",
+    "Raw provider response bodies, provider response IDs, and wall-clock response timestamps are unavailable in the completed ledger.",
+    "The two schema-validated parsed proposals are included after scoped synthetic-data, secret, and PII screening; evidence text and policy reasons remain omitted.",
+    "The Docker result proves only the named authored fixture transitioned from its recorded failing test contract to a passing one.",
+    "The usage amount is an upper-bound estimate; billed cost was not recorded."
+  ],
+  "recorded_observed_at": null,
+  "recorded_observed_at_status": "unavailable: the completed bounded ledger does not persist a wall-clock response timestamp",
+  "response_availability": {
+    "note": "The two parsed, policy-reviewed synthetic proposals are exported below; raw provider bodies are not retained.",
+    "parsed_policy_reviewed_proposals_available": true,
+    "provider_response_ids_available": false,
+    "raw_provider_response_bodies_available": false
+  },
+  "schema_version": 1,
+  "source_execution": {
+    "automatic_retries": 0,
+    "completed_attempt_count": 2,
+    "input_scope": "two newly authored synthetic fixtures",
+    "model": "muse-spark-1.3",
+    "recorded_mode": "live_synthetic_only"
+  },
+  "usage_estimate": {
+    "approved_budget_usd": "1.000000",
+    "billed_cost_usd": null,
+    "estimate_notice": "Conservative local estimate, conditional on tokenization/protocol and provider output-cap assumptions. NOT a provider billing hard cap.",
+    "reserved_usd": "0.102320",
+    "usage_complete": true,
+    "usage_cost_upper_usd": "0.010113"
+  }
+}
