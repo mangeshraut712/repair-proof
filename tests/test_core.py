@@ -24,3 +24,13 @@ class CoreTests(unittest.TestCase):
  def test_nested_function_and_signature_change_rejected(self):
   for replacement in ['def solve(x):\n    def solve(y):\n        return y\n    return x\n','def solve(x,y):\n    return x+y\n']:
    with self.subTest(replacement=replacement): self.assertFalse(validate('def solve(x):\n    return x + 1\n',self.proposal(replacement=replacement),{'L001'})['accepted'])
+
+ def test_unbounded_while_loop_is_rejected(self):
+  verdict=validate('def solve(x):\n    return x + 1\n',self.proposal(replacement='def solve(x):\n    while True:\n        pass\n'),{'L001'})
+  self.assertFalse(verdict['accepted'])
+  self.assertIn('Disallowed Python construct: While',verdict['reasons'])
+
+ def test_direct_recursion_remains_rejected(self):
+  verdict=validate('def solve(x):\n    return x + 1\n',self.proposal(replacement='def solve(x):\n    return solve(x)\n'),{'L001'})
+  self.assertFalse(verdict['accepted'])
+  self.assertIn('Call is not allowlisted',verdict['reasons'])

@@ -4,6 +4,16 @@ The registry, immutable test source, application code, Python runtime, Docker ex
 
 Edits are restricted to one exact virtual path `src/solution.py`; original SHA-256 must match. Since there is no user repository filesystem ingestion and container files are authored fresh, traversal, absolute paths and symlink targets cannot select host files. Tests, workflows, manifests and binary source are rejected. A restrictive AST policy excludes imports, introspection, dynamic execution and arbitrary calls. This is not a formal Python security boundary: resource exhaustion and logic errors remain possible, so patches must not execute on the host.
 
+The policy rejects `while` loops because it cannot prove their termination. Direct
+recursion is also rejected by the call allowlist: `solve` is not an allowed call,
+and nested functions are rejected. `for` loops remain allowed to preserve the
+fixture language (including the recorded first-position repair), so large or
+data-dependent iteration is **not** statically bounded by policy.
+Execution-time CPU, memory, PID and wall-clock limits in the Docker verifier are
+the remaining containment for that work; they do not make the syntax policy a
+general execution-safety guarantee. The verifier itself revalidates a structured
+proposal before starting a container, even if a caller already checked policy.
+
 Logs are bounded before sanitation, stripped of ANSI/control characters, assigned stable line IDs and redacted for common tokens/key-value credentials. This is **not comprehensive secret detection**. Only synthetic fixtures are accepted; arbitrary private logs are deliberately unsupported. Meta receives source and sanitized logs, not environment secrets or immutable tests. Credentials are server environment only and never included in prompts/packets/errors. Provider error bodies are not returned or logged.
 
 ## Verification
