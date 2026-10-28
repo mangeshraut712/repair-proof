@@ -1,6 +1,8 @@
 import json, unittest
 import httpx
 from repair_proof.meta_client import MetaClient, ProviderError
+from repair_proof.patch_policy import sha
+from repair_proof.schemas import Proposal
 from repair_proof.verifier import verify
 from repair_proof.fixtures import FIXTURES
 
@@ -20,7 +22,8 @@ class AdapterTests(unittest.TestCase):
   self.assertEqual(p.diagnosis,'fix'); self.assertEqual(m['input_tokens'],100)
  def test_verifier_disabled(self):
   f=next(iter(FIXTURES.values()))
-  self.assertEqual(verify(f,f.replacement,enabled=False)['status'],'unavailable')
+  proposal=Proposal(diagnosis=f.diagnosis,evidence_ids=['L003'],edits=[{'path':'src/solution.py','original_sha256':sha(f.source),'replacement':f.replacement}])
+  self.assertEqual(verify(f,proposal,enabled=False)['status'],'unavailable')
  def test_null_usage_does_not_crash(self):
   def reply(request): return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps({'diagnosis':'fix','evidence_ids':['L003'],'edits':[{'path':'src/solution.py','original_sha256':'0'*64,'replacement':'def solve(x): return x'}]})}}],'usage':None})
   p,m=MetaClient(enabled=True,key='secret',transport=httpx.MockTransport(reply)).diagnose([], 'x')

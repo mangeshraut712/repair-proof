@@ -9,6 +9,9 @@ import re
 import shutil
 import subprocess
 import uuid
+from .patch_policy import validate
+from .sanitize import evidence
+from .schemas import Proposal
 
 # Fixed trusted driver; model output is only JSON data written to solution.py.
 # The immutable test contract is supplied as an argument, not a writable file.
@@ -80,12 +83,19 @@ def _run(docker, image, source, tests):
         return {'error': 'sandbox returned no valid test result'}
 
 
-def verify(fixture, replacement, enabled=False):
-    """Verify a stored, policy-approved replacement with unchanged authored tests.
+def verify(fixture, proposal, enabled=False):
+    """Verify a structured proposal with unchanged authored tests.
 
-    Caller must independently validate policy before invoking this function.
-    An unavailable runtime is a truthful preview-only outcome, never success.
+    Revalidate the proposal at this execution boundary; callers cannot turn a
+    policy decision into a sandbox invocation.  An unavailable runtime is a
+    truthful preview-only outcome, never success.
     """
+    if not isinstance(proposal, Proposal):
+        return {'status': 'unverified', 'reason': 'A structured proposal is required; execution prohibited.'}
+    policy = validate(fixture.source, proposal, {line['id'] for line in evidence(fixture.log)})
+    if not policy['accepted']:
+        return {'status': 'unverified', 'reason': 'Proposal failed independent policy validation; execution prohibited.'}
+    replacement = proposal.edits[0].replacement
     if not enabled:
         return {'status': 'unavailable', 'reason': 'Sandbox disabled; preview only. No tests executed.'}
     image = os.environ.get('RP_SANDBOX_IMAGE', '')

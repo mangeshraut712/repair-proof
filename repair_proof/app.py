@@ -104,7 +104,7 @@ def verification(req: Verify):
     if not validate(f.source,proposal,{l['id'] for l in p['evidence']})['accepted']: raise HTTPException(409,'Stored proposal failed revalidation')
     if not VERIFY_SLOT.acquire(blocking=False): raise HTTPException(429,'Another isolated verification is running; retry when it completes')
     try:
-        result=verify(f,proposal.edits[0].replacement,enabled=os.environ.get('RP_ENABLE_SANDBOX')=='1')
+        result=verify(f,proposal,enabled=os.environ.get('RP_ENABLE_SANDBOX')=='1')
     finally:
         VERIFY_SLOT.release()
     with LOCK: p['verification']=result

@@ -9,7 +9,9 @@ def sha(text: str) -> str:
 
 ALLOWED_CALLS = {'len','range','sum','min','max','abs','sorted','reversed','enumerate','zip','list','tuple','set','dict','str','int','float','bool','round','all','any'}
 ALLOWED_METHODS = {'fromkeys','lower','upper','strip','split','join','append','count','index','replace','startswith','endswith','get','items','keys','values'}
-FORBIDDEN_NODES = (ast.Import,ast.ImportFrom,ast.With,ast.AsyncWith,ast.ClassDef,ast.Lambda,ast.Global,ast.Nonlocal,ast.Try,ast.Raise,ast.Delete,ast.Yield,ast.YieldFrom,ast.Await)
+# A while-loop has no statically enforced termination bound.  Narrow for-loops
+# remain available for the authored fixture shape; Docker still bounds runtime.
+FORBIDDEN_NODES = (ast.Import,ast.ImportFrom,ast.With,ast.AsyncWith,ast.While,ast.ClassDef,ast.Lambda,ast.Global,ast.Nonlocal,ast.Try,ast.Raise,ast.Delete,ast.Yield,ast.YieldFrom,ast.Await)
 
 def validate(source: str, proposal: Proposal, evidence_ids: set[str]) -> dict:
     reasons=[]
