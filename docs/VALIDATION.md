@@ -2,11 +2,38 @@
 
 ## Current public-release summary
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
-it remains undeployed and unsubmitted. The current local v9 result is **58
-offline tests passed** plus isolated **375×812** recorded-mode QA; see
-[Local v9 offline and phone QA](#local-v9-offline-and-phone-qa). Historical
-sections below preserve their contemporaneous 35- and 49-test results and
-earlier phone-QA limitations rather than describing the current release.
+it remains undeployed and unsubmitted. Post-merge verification of code commit
+`b559b05779180c304b29121b9af936aed89e2ab6` completed **62 offline tests**
+plus an isolated **375×812** recorded-mode browser smoke test; see
+[Current post-merge verification](#current-post-merge-verification--2026-10-30).
+Historical sections below preserve their contemporaneous 35-, 49-, and
+58-test results and earlier phone-QA limitations rather than describing the
+current release.
+
+## Current post-merge verification — 2026-10-30
+
+At code commit `b559b05779180c304b29121b9af936aed89e2ab6`, an isolated
+worktree ran the complete offline suite with `MODEL_API_KEY`, live mode and
+sandbox mode unset:
+
+- `python -m unittest discover -s tests -v`: **62 passed**, 0 failures/errors.
+- Both authored-replay evaluations completed: 10/10 repairable accepted and
+  6/6 unsafe rejected by default; 12/12 and 8/8 with visible authored holdouts.
+  These remain policy metrics, not model-quality measurements.
+- `pip check`, `node --check web/app.js`, tracked-file/manifest SHA-256
+  verification (42 entries), and `git diff --check` passed.
+- A loopback-only FastAPI server ran with live credentials and live/sandbox
+  flags removed. Isolated headless Chrome at 375×812 checked both recorded
+  fixtures, the explicit no-API label, historical-versus-current `NOT RUN`
+  state, disabled verification, nonempty Markdown/JSON downloads, selection
+  reset, long-hash wrapping, no horizontal overflow, no non-loopback page
+  requests, and no page errors. This was a new local UI check; it did not make
+  a model request or rerun Docker verification.
+
+The optional Python mocked-API browser helper remains unexecuted because its
+Python Playwright dependency is not bundled in the tested environment. It is
+not represented as a pass; the loopback check above exercises the real app
+instead.
 ## Actual cloud checks
 - `python -m unittest discover -s tests -v`: **35 passed**, 0 failures/errors. Observed missing-module/behavior RED tests before core implementation and regression fixes, then GREEN. One preinstalled Starlette/httpx deprecation warning remains; it is not a test failure.
 - `node --check web/app.js`: passed.
@@ -35,7 +62,7 @@ phone QA and publication status are summarized above.
 - At that time, no deployment, repository publishing, real-world repo ingestion, submission, payment or credentials had been created.
 
 ## Remaining release gates
-1. The optional mocked-API browser helper remains unexecuted; do not represent it as a pass.
+1. The optional Python mocked-API browser helper remains unexecuted; do not represent it as a pass. The separate 2026-10-30 real-app loopback browser check is recorded above.
 2. Any further Meta batch requires separate explicit approval; do not reuse the completed ledger or extrapolate from the two recorded fixtures.
 3. Review official hackathon eligibility/rules/assets, then authorize submission separately.
 
