@@ -15,8 +15,9 @@ python -m uvicorn repair_proof.app:app --host 127.0.0.1 --port 8000
 Open http://127.0.0.1:8000. Installing dependencies requires package access; replay itself makes no outbound request. This is a **loopback-only single-user prototype**, not a production hosted service. Do not expose it publicly. Packets live in memory, maximum 200, and expire on restart.
 
 `requirements.lock` is an optional conservative constraints file, not a
-fresh-install portability guarantee. The current package index rejected the
-required Pydantic download during a clean Python 3.12 probe; see
+fresh-install portability guarantee. One prior controlled Python 3.12 probe's
+configured index path rejected the required Pydantic download; this does not
+claim that Pydantic is generally unavailable from PyPI. See
 [CLEAN_INSTALL.md](docs/CLEAN_INSTALL.md) for exact local evidence and limits.
 
 ## Validate

@@ -33,8 +33,14 @@ PyPI installation or of Python 3.12 portability.
 A fresh probe used the preloaded, digest-pinned Python 3.12 image with only a
 conservative candidate constraints file mounted. No source, credential, or
 private ledger was mounted. The resolver fetched the candidate metadata through
-the historical FastAPI/httpx stack, then the current package index rejected
+the historical FastAPI/httpx stack, then that controlled probe's configured
+index path rejected
 `pydantic==2.8.2` as unavailable. Installation stopped before test execution.
+
+This records that prior controlled probe, not a claim that Pydantic 2.8.2 is
+generally unavailable from PyPI. A prior successful public GitHub Actions run
+installed the direct baseline on Python 3.12; it does not by itself reproduce
+the optional full-lock installation in this local environment.
 
 The original full lock also contained future-dated transitive pins unavailable
 from this index. Therefore this environment does **not** establish a fresh,
