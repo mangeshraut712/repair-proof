@@ -43,10 +43,20 @@ jobs:
           python - <<'PY'
           import hashlib
           import json
+          import subprocess
           from pathlib import Path
 
           root = Path.cwd().resolve()
           entries = json.loads((root / "SOURCE_MANIFEST.json").read_text())["files_sha256"]
+          tracked = set(
+              subprocess.run(["git", "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
+          )
+          expected_paths = tracked - {"SOURCE_MANIFEST.json"}
+          manifest_paths = set(entries)
+          if manifest_paths != expected_paths:
+              missing = sorted(expected_paths - manifest_paths)
+              extra = sorted(manifest_paths - expected_paths)
+              raise SystemExit(f"Manifest file-set mismatch; missing={missing}; extra={extra}")
           mismatches = []
           for relative, expected in entries.items():
               candidate = (root / relative).resolve()
