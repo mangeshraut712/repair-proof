@@ -21,6 +21,9 @@ VERIFY_PACKET = ROOT / 'scripts' / 'verify_packet.py'
 
 class PacketVerifierTests(unittest.TestCase):
     def setUp(self):
+        self._offline_env = patch.dict(os.environ, {'RP_ENABLE_SANDBOX': '0'}, clear=False)
+        self._offline_env.start()
+        self.addCleanup(self._offline_env.stop)
         self.client = TestClient(app)
 
     def review_packet(self, mode):

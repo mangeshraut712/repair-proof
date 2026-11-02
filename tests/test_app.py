@@ -3,7 +3,15 @@ from fastapi.testclient import TestClient
 from repair_proof.app import app
 
 class AppTests(unittest.TestCase):
- def setUp(self): self.client=TestClient(app)
+ def setUp(self):
+  from unittest.mock import patch
+  import os
+  self._offline_env=patch.dict(os.environ,{'RP_ENABLE_SANDBOX':'0'},clear=False)
+  self._offline_env.start();self.addCleanup(self._offline_env.stop)
+  self.client=TestClient(app)
+ def test_default_test_environment_keeps_sandbox_disabled(self):
+  """Offline tests must not inherit an operator's Docker opt-in."""
+  self.assertIs(self.client.get('/api/fixtures').json()['sandbox_enabled'],False)
  def test_registry_and_replay_packet(self):
   fixtures=self.client.get('/api/fixtures').json()['fixtures']; self.assertEqual(len(fixtures),20)
   r=self.client.post('/api/preview',json={'fixture_id':fixtures[0]['id'],'mode':'replay'})

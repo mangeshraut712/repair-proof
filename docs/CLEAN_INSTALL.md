@@ -11,22 +11,38 @@ python -m pip --isolated install --index-url https://pypi.org/simple --no-cache-
 ```
 
 Its direct pins are FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and
-Uvicorn 0.30.6. Python 3.12 is recommended for a clean reproduction.
+Uvicorn 0.30.6. Python 3.12 is recommended for a clean reproduction; the
+fresh local evidence below is for Python 3.13.2 only because no Python 3.12
+interpreter was available on that host.
 
-## Local evidence
+## Fresh direct-baseline reproduction (Python 3.13.2)
 
-A separate Python 3.13.2 project virtual environment, without global
-mutation, was populated from the available compatible direct-pin dependency
-closure. It used the direct versions above plus compatible locally available
-transitives. In that environment:
+At source revision `6a58372ffbd184faa6e3b610406a4d78f3a33cc7`, a new Python
+3.13.2 virtual environment installed the canonical direct pins from
+`https://pypi.org/simple` with the command above. It used no global package
+mutation, credential, model key, Docker image, or cached-package fallback.
+The resolved closure included Pydantic Core 2.20.1, Starlette 0.37.2,
+httpcore 1.0.9, and h11 0.16.0.
 
 - `python -m pip check` reported no broken requirements.
-- Historical v4 direct-baseline validation: `python -m unittest discover -s tests -v` passed **49 tests**.
-- `python -m repair_proof.evaluate` completed the 16-case authored replay
-  policy evaluation.
+- A fresh local Git checkout passed **83** offline tests, the 16-case and
+  20-case authored-replay policy evaluations, evaluation-snapshot verification,
+  and the 49-entry manifest check. The expanded evaluation remains policy-only:
+  it did not execute proposed code or query a model.
+- The 12 packet-verifier and 17 app/API-boundary tests also passed in that
+  environment.
 
-This is useful local compatibility evidence. It is not evidence of a fresh
-PyPI installation or of Python 3.12 portability.
+This is a fresh direct-pin PyPI-install result for Python 3.13.2. It does not
+establish Python 3.12 portability or fresh-install portability of the optional
+full constraints file.
+
+### Git checkout versus source archive
+
+Use a Git checkout for the complete validation command. A `git archive`
+extraction intentionally fails one manifest-related test because
+`verify_manifest.py` checks the tracked file set and requires `.git`. This is
+not an application/runtime failure and does not affect offline replay, but an
+archive alone cannot satisfy the project's full manifest-validation gate.
 
 ## Python 3.12 clean-install probe
 
@@ -52,7 +68,7 @@ portable, full-lock install.
 whose trusted index serves them. It is optional and intentionally does not
 claim fresh-install portability. Do not replace the direct baseline with a lock
 claim until a clean environment installs the full file, passes `pip check`,
-and passes the historical 49-test suite (the current release has additional recorded-mode tests).
+and passes the current full suite.
 
 ## Scope
 

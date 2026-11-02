@@ -3,15 +3,22 @@
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
 it remains undeployed and unsubmitted. This candidate extends public main
-`668c97cf86f6c1376440b42a0cbb0beb52d6b920`: browser live inference remains
+`6a58372ffbd184faa6e3b610406a4d78f3a33cc7`: browser live inference remains
 CLI-only, and this candidate adds an explicit current-versus-historical review
 rail, normalized early API rejections, deterministic evaluation-snapshot
 verification, and an offline review-packet consistency verifier.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **83 passed**, 0 failures/errors.
+  `python -m unittest discover -s tests -v`: **84 passed**, 0 failures/errors.
   This is not a fresh Python 3.12 dependency-bootstrap claim.
+- At `6a58372ffbd184faa6e3b610406a4d78f3a33cc7`, a fresh Git checkout in a
+  newly created Python **3.13.2** virtual environment installed the canonical
+  direct pins from official PyPI. `pip check`, 83 offline tests, both
+  authored-replay evaluations, evaluation-snapshot verification, and the
+  49-entry manifest check passed. No local Python 3.12 interpreter was
+  available, and the optional full constraints lock remains unproven; see
+  `CLEAN_INSTALL.md`.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
   visible authored holdouts. `python scripts/verify_evaluations.py` rebuilt
@@ -40,6 +47,11 @@ verification, and an offline review-packet consistency verifier.
   download note changed to state that packets recording a verification attempt
   remain downloadable but are deliberately outside the offline checker’s
   scope; live remained disabled and there was no horizontal overflow.
+- The `AppTests` and `PacketVerifierTests` classes explicitly force
+  `RP_ENABLE_SANDBOX=0`. A regression run launched with ambient
+  `RP_ENABLE_SANDBOX=1` still kept those app/API and packet-verifier checks
+  offline, so a developer's Docker opt-in cannot make them initiate a
+  container verification.
 
 The historical 375×812 real-app check below remains evidence for its named
 source revision only. Historical sections preserve their contemporaneous 35-,
@@ -102,7 +114,7 @@ phone QA and publication status are summarized above.
 3. Review official hackathon eligibility/rules/assets, then authorize submission separately.
 
 ## Runtime observed
-The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; a separate Python 3.13.2 project venv using its available compatible closure passed the suite and `pip check`. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
+The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; the fresh direct-pin Python 3.13.2 evidence is recorded above. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
 
 ## Capability UX update
 Added explicit `sandbox_enabled` capability to registry response. Disabled sandbox now disables Verify and displays a preview-only explanation before interaction. Enabled means operator opt-in, not proven runtime availability. API regression test covers both states; optional browser QA covers disabled and enabled branches. TrustedHost allowlist unchanged.
