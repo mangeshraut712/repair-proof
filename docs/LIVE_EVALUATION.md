@@ -2,13 +2,13 @@
 Implementation has been tested offline only. No key is handled or live request made during implementation. A later operator must have explicit user approval for the specific batch; the CLI flag records that intent, it does not create approval.
 
 ## One-command smoke run (ONLY after approval and secure key setup)
-Use a fresh, existing private working directory, a dedicated Meta key securely provided as `MODEL_API_KEY`, and do not start the web app in live mode alongside this run:
+Use a fresh, existing private working directory and a dedicated Meta key securely provided as `MODEL_API_KEY`. Browser live inference is permanently disabled, so a separately running browser can only replay recorded or authored evidence:
 ```sh
 python -m repair_proof.live_eval --ledger ./meta-live-approved-batch.json --fixtures inclusive-total first-position --max-calls 10 --budget-usd 1.00 --approve-live-spend
 ```
 This runs TWO requests, not ten. To test more, choose the entire approved batch before starting (at most ten distinct registry IDs). Every original attempt counts; automatic retries are **zero**. Do not split/repeat the approved budget across fresh ledger paths. Do not delete/rename a ledger to retry. Any additional batch after this one needs approval that accounts for existing exposure.
 
-**Do not run this command merely to test setup.** Offline checks are `python -m unittest discover -s tests -v`. No keys are needed for tests. The runner does not require `RP_ENABLE_LIVE` because explicit CLI approval is its separate opt-in; leave the web app live switch off.
+**Do not run this command merely to test setup.** Offline checks are `python -m unittest discover -s tests -v`. No keys are needed for tests. The runner does not require `RP_ENABLE_LIVE` because explicit CLI approval is its separate opt-in; the browser has no live switch.
 
 ## Conditional conservative exposure bound
 Official Meta Standard prices recorded 2026-10-27: input $1.25/million, output $4.25/million; cached input $0.15/million. References: https://dev.meta.ai/docs/pricing-rate-limits and https://dev.meta.ai/docs/token-counting.
@@ -31,4 +31,4 @@ The ledger stores observed input/output token counts, latency, proposal and inde
 `usage_cost_upper_usd` is a subtotal calculated from observed token counts at **uncached** Standard prices, not actual billed dollars (cached input may cost less). `billed_cost_usd` stays null; `usage_complete=false` means unknown exposure remains and the subtotal must not be treated as total cost. Conservative `reserved_usd` is separate. Reasoning output is not subtracted from completion tokens. A successful policy verdict is not evidence of repair correctness; Docker execution and semantic citation review are separate steps.
 
 ## Limits
-Local batch limits cannot govern concurrent callers, other ledger filenames, direct API use or provider billing changes. Run only one approved batch with one dedicated key. CLI exit status 0 means the selected request/usage workflow completed, **not** that all proposed repairs passed policy or tests. Status 2 means refused or halted; do not auto-retry from shell/CI. The web UI has no aggregate budget ledger, so it is not the authorized path for this bounded evaluation.
+Local batch limits cannot govern concurrent callers, other ledger filenames, direct API use or provider billing changes. Run only one approved batch with one dedicated key. CLI exit status 0 means the selected request/usage workflow completed, **not** that all proposed repairs passed policy or tests. Status 2 means refused or halted; do not auto-retry from shell/CI. The web UI does not invoke Meta: it refuses live previews even when a process has a key, so the CLI is the only application route for this bounded evaluation.

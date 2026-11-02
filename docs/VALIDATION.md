@@ -1,16 +1,31 @@
 # Validation record — 2026-10-27
 
-## Current public-release summary
+## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
-it remains undeployed and unsubmitted. Post-merge verification of code commit
-`b559b05779180c304b29121b9af936aed89e2ab6` completed **62 offline tests**
-plus an isolated **375×812** recorded-mode browser smoke test; see
-[Current post-merge verification](#current-post-merge-verification--2026-10-30).
-Historical sections below preserve their contemporaneous 35-, 49-, and
-58-test results and earlier phone-QA limitations rather than describing the
-current release.
+it remains undeployed and unsubmitted. This candidate is based on public main
+`a8695543ba1547e5e06b4bf0ef36e0dc112cf703` and makes browser live inference
+CLI-only, so a browser request cannot bypass the bounded runner's durable
+ledger.
 
-## Current post-merge verification — 2026-10-30
+- With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
+  existing project-compatible Python **3.13.2** runtime completed
+  `python -m unittest discover -s tests -v`: **66 passed**, 0 failures/errors.
+  This is not a fresh Python 3.12 dependency-bootstrap claim.
+- Both authored-replay evaluations completed: 10/10 repairable proposals
+  accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
+  visible authored holdouts. They remain policy metrics, not model-quality
+  measurements.
+- `node --check web/app.js` and `git diff --check` passed. The source manifest
+  was recomputed and independently verified at 42 entries.
+- No current browser/viewport pass is claimed: the optional Python Playwright
+  helper could not run because it is not installed and its previously cached
+  Node Playwright path was absent. No package was installed to fill that gap.
+
+The historical 375×812 real-app check below remains evidence for its named
+source revision only. Historical sections preserve their contemporaneous 35-,
+49-, 58-, and 62-test results rather than describing this candidate.
+
+## Historical public-release verification — 2026-10-30
 
 At code commit `b559b05779180c304b29121b9af936aed89e2ab6`, an isolated
 worktree ran the complete offline suite with `MODEL_API_KEY`, live mode and

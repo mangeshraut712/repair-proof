@@ -9,7 +9,7 @@ A repeatable demonstration of two prior real Meta proposals, without another API
 5. Current execution starts **NOT RUN**. Only an enabled, available local sandbox can perform a new verification. Otherwise it remains preview-only. Historical success never changes current execution status.
 6. Download JSON/Markdown: provenance and historical record travel with the review packet.
 
-Authored replay remains a distinct handwritten example mode; Live Meta remains separately operator-gated and may cost money. The bounded live-evaluation runner is unchanged; recorded mode does not invoke it or consume its budget. Unsupported selected fixtures disable recorded Preview and explain the two-case limitation; the server also rejects unsupported IDs.
+Authored replay remains a distinct handwritten example mode; the CLI-only live runner remains separately operator-gated and may cost money. The bounded live-evaluation runner is unchanged; recorded mode does not invoke it or consume its budget. Unsupported selected fixtures disable recorded Preview and explain the two-case limitation; the server also rejects unsupported IDs.
 
 ## Data integrity and limits
 Only the fixed project file `docs/RECORDED_LIVE_PROOF.json` is read. It is bounded to32KiB, rejected if symlinked, and pinned to reviewed SHA-256 `eeb08ec01ab6c25b4862570f8bea2008369a5ae1248b143d74a683aa5ec8ea82`. No user path, upload or URL is accepted. Missing/tampered data disables availability and fails closed, never falls back to authored or live output.

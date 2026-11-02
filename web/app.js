@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $ = (id) => document.getElementById(id);
-  const state = { fixtures: [], packet: null, busy: false, live: false, sandbox: false, recordedIds: [] };
+  const state = { fixtures: [], packet: null, busy: false, sandbox: false, recordedIds: [] };
   const setText = (id, value) => { $(id).textContent = value == null ? '' : String(value); };
   const readable = (value) => typeof value === 'string' ? value : JSON.stringify(value, null, 2);
   function status(message) { setText('status', message); }
@@ -15,7 +15,7 @@
     state.busy = value;
     $('preview').disabled = value || !state.fixtures.length || unsupportedRecord();
     $('fixture').disabled = value || !state.fixtures.length;
-    document.querySelectorAll('input[name="mode"]').forEach((input) => { input.disabled = value || (input.value === 'live' && !state.live); });
+    document.querySelectorAll('input[name="mode"]').forEach((input) => { input.disabled = value || input.value === 'live'; });
     $('verify').disabled = value || !state.sandbox || !state.packet || !state.packet.policy.accepted;
     document.querySelector('.review').setAttribute('aria-busy', String(value));
     setText('preview', value ? 'Working…' : 'Review this repair ↗');
@@ -112,12 +112,11 @@ Proposal SHA-256: ${recorded.proposal_sha256}` : '');
     finally { busy(false); }
   });
   request('/api/fixtures').then((data) => {
-    state.fixtures = data.fixtures; state.live = data.live_enabled === true; state.sandbox = data.sandbox_enabled === true;
+    state.fixtures = data.fixtures; state.sandbox = data.sandbox_enabled === true;
     state.recordedIds = Array.isArray(data.recorded_fixture_ids) ? data.recorded_fixture_ids : [];
     setText('sandbox-note', state.sandbox ? 'Sandbox requested by the operator. Runtime readiness is checked on each run; no host fallback.' : 'Preview only: isolated sandbox is disabled. Verification is unavailable; no code will run.');
     $('fixture').replaceChildren();
     state.fixtures.forEach((fixture) => { const option = document.createElement('option'); option.value = fixture.id; option.textContent = `${fixture.title}${state.recordedIds.includes(fixture.id) ? ' · recorded Meta available' : ''}${fixture.holdout ? ' · holdout' : ''}`; $('fixture').append(option); });
-    if (state.live) setText('live-note', 'Sends sanitized evidence to Meta. May incur cost.');
     fixtureDetail(); updateRecordedNote(); busy(false);
     if (!state.fixtures.length) status('No fixtures are available. Check the server configuration.');
   }).catch((error) => { fail(error); status('Cases could not be loaded. Reload after the server is available.'); });

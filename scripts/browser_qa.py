@@ -31,12 +31,6 @@ with sync_playwright() as p:
  page.goto(f'http://127.0.0.1:{server.server_port}');page.wait_for_selector('#preview:not([disabled])')
  assert page.locator('input[value=live]').is_disabled()
  page.click('#preview');page.wait_for_selector('#results:not([hidden])')
- assert page.locator('#source-badge').inner_text()=='AUTHORED REPLAY'
- assert page.evaluate('window.injected') is None
- assert '<script>' in page.locator('#evidence').inner_text()
- assert page.locator('#verify').is_disabled()
- assert 'Preview only' in page.locator('#verification-reason').inner_text()
- page.check('input[value=recorded]');page.click('#preview')
  page.wait_for_function("document.getElementById('source-badge').textContent === 'RECORDED META PROOF'")
  assert 'no API call' in page.locator('#provenance-title').inner_text()
  assert page.locator('#verification-badge').inner_text()=='NOT RUN'
@@ -44,6 +38,13 @@ with sync_playwright() as p:
  page.locator('#recorded-details summary').click()
  assert '<script>' in page.locator('#recorded-record').inner_text()
  assert page.evaluate('window.injected') is None
+ page.check('input[value=replay]');page.click('#preview')
+ page.wait_for_function("document.getElementById('source-badge').textContent === 'AUTHORED REPLAY'")
+ assert page.evaluate('window.injected') is None
+ assert '<script>' in page.locator('#evidence').inner_text()
+ assert page.locator('#verify').is_disabled()
+ assert 'Preview only' in page.locator('#verification-reason').inner_text()
+ page.check('input[value=recorded]')
  page.select_option('#fixture','unsupported')
  assert page.locator('#preview').is_disabled()
  assert 'No recorded Meta proof' in page.locator('#recorded-note').inner_text()
@@ -52,7 +53,7 @@ with sync_playwright() as p:
  page.select_option('#fixture','one')
  # Explicit opt-in capability is distinct from runtime readiness. Reload enabled.
  def enabled_registry(route):
-  route.fulfill(status=200,content_type='application/json',body=json.dumps({'fixtures':[packet['fixture'],{'id':'unsupported','title':'No stored response','category':'repairable','holdout':False}],'live_enabled':False,'sandbox_enabled':True}))
+  route.fulfill(status=200,content_type='application/json',body=json.dumps({'fixtures':[packet['fixture'],{'id':'unsupported','title':'No stored response','category':'repairable','holdout':False}],'live_enabled':False,'sandbox_enabled':True,'recorded_fixture_ids':['one']}))
  page.route('**/api/fixtures',enabled_registry)
  page.reload();page.wait_for_selector('#preview:not([disabled])');page.click('#preview');page.wait_for_selector('#verify:not([disabled])')
  page.click('#verify');page.wait_for_function("document.getElementById('verification-badge').textContent === 'UNAVAILABLE'")

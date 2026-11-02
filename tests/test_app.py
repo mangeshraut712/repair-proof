@@ -18,7 +18,37 @@ class AppTests(unittest.TestCase):
   self.assertEqual(self.client.get('/api/packet/'+'a'*32).status_code,404)
  def test_live_disabled(self):
   fid=self.client.get('/api/fixtures').json()['fixtures'][0]['id']
-  self.assertEqual(self.client.post('/api/preview',json={'fixture_id':fid,'mode':'live'}).status_code,503)
+  self.assertEqual(self.client.post('/api/preview',json={'fixture_id':fid,'mode':'live'}).status_code,403)
+ def test_browser_live_preview_is_refused_even_with_legacy_live_environment(self):
+  """The browser must never bypass the CLI runner's durable budget ledger."""
+  from unittest.mock import patch
+  import os
+  fid=self.client.get('/api/fixtures').json()['fixtures'][0]['id']
+  with patch.dict(os.environ,{'RP_ENABLE_LIVE':'1','MODEL_API_KEY':'test-only-key'},clear=False),patch('repair_proof.meta_client.MetaClient.diagnose') as diagnose:
+   from repair_proof.app import live_enabled
+   self.assertFalse(live_enabled())
+   self.assertIs(self.client.get('/api/fixtures').json()['live_enabled'],False)
+   r=self.client.post('/api/preview',json={'fixture_id':fid,'mode':'live'})
+  self.assertEqual(r.status_code,403)
+  self.assertIn('live_eval',r.text)
+  diagnose.assert_not_called()
+ def test_browser_script_never_enables_live_input(self):
+  from pathlib import Path
+  script=(Path(__file__).resolve().parents[1]/'web'/'app.js').read_text()
+  self.assertIn("input.value === 'live'",script)
+  self.assertNotIn('state.live',script)
+ def test_judge_default_and_live_lock_are_visibly_distinct(self):
+  from pathlib import Path
+  root=Path(__file__).resolve().parents[1]
+  page=(root/'web'/'index.html').read_text();style=(root/'web'/'style.css').read_text()
+  self.assertIn('<input type="radio" name="mode" value="recorded" checked>',page)
+  self.assertIn('class="mode-option is-disabled" id="live-label"',page)
+  self.assertIn('.mode-option.is-disabled',style)
+  self.assertIn('@media(max-width:430px){fieldset{grid-template-columns:1fr}',style)
+ def test_browser_qa_keeps_recorded_fixture_available_after_capability_reload(self):
+  from pathlib import Path
+  qa=(Path(__file__).resolve().parents[1]/'scripts'/'browser_qa.py').read_text()
+  self.assertGreaterEqual(qa.count("'recorded_fixture_ids':['one']"),2)
  def test_adversarial_rejected(self):
   fs=self.client.get('/api/fixtures').json()['fixtures']
   for f in fs:

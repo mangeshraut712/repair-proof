@@ -10,7 +10,6 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .fixtures import FIXTURES
-from .meta_client import MetaClient, ProviderError
 from .patch_policy import sha, validate
 from .sanitize import evidence
 from .schemas import Preview, Proposal, Verify
@@ -26,7 +25,8 @@ LOCK=threading.Lock()
 VERIFY_SLOT=threading.BoundedSemaphore(1)
 
 def live_enabled():
-    return os.environ.get('RP_ENABLE_LIVE')=='1' and bool(os.environ.get('MODEL_API_KEY'))
+    """The loopback browser is replay/recorded-only; live calls use live_eval."""
+    return False
 
 @app.middleware('http')
 async def security(request: Request, call_next):
@@ -79,9 +79,7 @@ def preview(req: Preview):
         metrics={'latency_ms':None,'input_tokens':None,'output_tokens':None,'cost_usd':None}
         provenance='Recorded prior Meta response — no API call. Model: muse-spark-1.3. Stored parsed proposal, not a raw HTTP response. Historical Docker results are not current verification.'
     else:
-        try: proposal,metrics=MetaClient(enabled=live_enabled(),key=os.environ.get('MODEL_API_KEY')).diagnose(lines,f.source)
-        except ProviderError as e: raise HTTPException(503,str(e)) from None
-        provenance='Live Meta API — muse-spark-1.3. Independent policy is not verification. Logs are synthetic fixture evidence.'
+        raise HTTPException(403,'Browser live inference is disabled. Use the budgeted live_eval CLI only after separate approval.')
     packet={'id':uuid.uuid4().hex,'fixture':{'id':f.id,'title':f.title,'category':f.category,'holdout':f.holdout},'mode':req.mode,'provenance':provenance,'evidence':lines,'proposal':proposal.model_dump(),'policy':validate(f.source,proposal,{l['id'] for l in lines}),'verification':{'status':'not_run','reason':'No code has been executed. Policy acceptance is not repair proof.'},'metrics':metrics,'integrity':{'source_sha256':sha(f.source),'test_sha256':sha(f.test_source),'replacement_sha256':sha(proposal.edits[0].replacement)}}
     if recorded_proof is not None: packet['recorded_proof']=recorded_proof
     with LOCK:
