@@ -35,6 +35,39 @@
     } finally { clearTimeout(timer); }
   }
   function badge(id, label, kind) { setText(id, label); $(id).className = `badge ${kind}`; }
+  function railStage(name, state, detail, kind) {
+    setText(`rail-${name}-state`, state);
+    setText(`rail-${name}-detail`, detail);
+    $(`rail-${name}`).className = `decision-step ${kind}`;
+  }
+  function renderDecisionRail(packet, recorded) {
+    railStage('evidence', 'SANITIZED', 'Synthetic fixture evidence is untrusted text; no repository upload is accepted.', 'neutral');
+    if (packet.mode === 'recorded') {
+      railStage('source', 'RECORDED', 'Prior Meta response loaded from the pinned local artifact. No API call.', 'neutral');
+    } else if (packet.mode === 'replay') {
+      railStage('source', 'AUTHORED REPLAY', 'Deterministic synthetic proposal; not model-generated.', 'neutral');
+    } else {
+      railStage('source', 'LIVE RESPONSE', 'A live response remains only a proposal; policy and execution are separate.', 'pending');
+    }
+    if (packet.policy.accepted) {
+      railStage('policy', 'ACCEPTED', 'The independent patch policy accepted this change. That is not a test pass.', 'good');
+    } else {
+      railStage('policy', 'REJECTED', 'The independent patch policy rejected this change. Execution is prohibited.', 'bad');
+    }
+    const verification = packet.verification || {};
+    if (!packet.policy.accepted) {
+      railStage('execution', 'BLOCKED — NOT EXECUTED', 'A policy rejection blocks execution before a sandbox can start.', 'bad');
+    } else if (verification.status === 'verified') {
+      railStage('execution', 'VERIFIED', verification.reason || 'The isolated verifier recorded this session result.', 'good');
+    } else if (verification.status === 'unavailable') {
+      railStage('execution', 'UNAVAILABLE — NOT RUN', verification.reason || 'The isolated sandbox is unavailable; no code ran.', 'pending');
+    } else if (verification.status === 'not_run') {
+      const history = recorded && recorded.previous_verification && recorded.previous_verification.status === 'verified';
+      railStage('execution', 'NOT RUN', history ? 'No code has been executed in this session. Historical Docker result before=1 → after=0 is separate.' : 'No code has been executed in this session.', 'pending');
+    } else {
+      railStage('execution', String(verification.status).replaceAll('_', ' ').toUpperCase(), verification.reason || 'No execution proof was provided.', 'bad');
+    }
+  }
   function render(packet) {
     state.packet = packet;
     $('empty').hidden = true; $('results').hidden = false;
@@ -44,6 +77,7 @@
     setText('provenance-title', packet.mode === 'live' ? 'Live inference · independently checked' : packet.mode === 'recorded' ? 'Recorded prior Meta response — no API call' : 'Authored replay · not model-generated');
     setText('provenance', readable(packet.provenance));
     const recorded = packet.mode === 'recorded' && packet.recorded_proof;
+    renderDecisionRail(packet, recorded);
     $('recorded-summary-panel').hidden = !recorded;
     $('recorded-details').hidden = !recorded;
     setText('recorded-summary', recorded ? `Model: ${recorded.model}

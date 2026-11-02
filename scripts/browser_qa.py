@@ -34,12 +34,16 @@ with sync_playwright() as p:
  page.wait_for_function("document.getElementById('source-badge').textContent === 'RECORDED META PROOF'")
  assert 'no API call' in page.locator('#provenance-title').inner_text()
  assert page.locator('#verification-badge').inner_text()=='NOT RUN'
+ assert page.locator('#rail-source-state').inner_text()=='RECORDED'
+ assert page.locator('#rail-execution-state').inner_text()=='NOT RUN'
+ assert 'Historical Docker result' in page.locator('#rail-execution-detail').inner_text()
  assert 'muse-spark-1.3' in page.locator('#recorded-summary').inner_text()
  page.locator('#recorded-details summary').click()
  assert '<script>' in page.locator('#recorded-record').inner_text()
  assert page.evaluate('window.injected') is None
  page.check('input[value=replay]');page.click('#preview')
  page.wait_for_function("document.getElementById('source-badge').textContent === 'AUTHORED REPLAY'")
+ assert page.locator('#rail-source-state').inner_text()=='AUTHORED REPLAY'
  assert page.evaluate('window.injected') is None
  assert '<script>' in page.locator('#evidence').inner_text()
  assert page.locator('#verify').is_disabled()
@@ -58,12 +62,14 @@ with sync_playwright() as p:
  page.reload();page.wait_for_selector('#preview:not([disabled])');page.click('#preview');page.wait_for_selector('#verify:not([disabled])')
  page.click('#verify');page.wait_for_function("document.getElementById('verification-badge').textContent === 'UNAVAILABLE'")
  assert 'refused' in page.locator('#verification-reason').inner_text()
+ assert page.locator('#rail-execution-state').inner_text()=='UNAVAILABLE — NOT RUN'
  page.screenshot(path='/tmp/repair-proof-desktop.png',full_page=True)
- page.set_viewport_size({'width':390,'height':844});page.screenshot(path='/tmp/repair-proof-mobile.png',full_page=True)
+ page.set_viewport_size({'width':320,'height':844});page.screenshot(path='/tmp/repair-proof-mobile.png',full_page=True)
  assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
  packet['policy']={'accepted':False,'reasons':['Forbidden import.'],'diff':''}
  page.click('#preview');page.wait_for_function("document.getElementById('policy-badge').textContent === 'REJECTED'")
  assert page.locator('#verify').is_disabled()
+ assert page.locator('#rail-execution-state').inner_text()=='BLOCKED — NOT EXECUTED'
  assert not errors, errors
  print('PASS: replay provenance, live lock, disabled sandbox capability, recorded provenance/history separation and unsupported selection, XSS-safe evidence, sandbox-unavailable state, rejection blocks verify, mobile overflow, JS console.')
  browser.close()

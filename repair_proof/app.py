@@ -6,7 +6,7 @@ import time
 import uuid
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .fixtures import FIXTURES
@@ -23,6 +23,15 @@ app.mount('/static',StaticFiles(directory=ROOT/'web'),name='static')
 PACKETS={}
 LOCK=threading.Lock()
 VERIFY_SLOT=threading.BoundedSemaphore(1)
+SECURITY_HEADERS={
+    'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+    'X-Content-Type-Options':'nosniff',
+    'Cache-Control':'no-store',
+}
+
+def reject(detail, status):
+    """Return a browser-readable error without bypassing response hardening."""
+    return JSONResponse({'detail':detail},status_code=status,headers=SECURITY_HEADERS)
 
 def live_enabled():
     """The loopback browser is replay/recorded-only; live calls use live_eval."""
@@ -33,22 +42,20 @@ async def security(request: Request, call_next):
     if request.method=='POST':
         origin=request.headers.get('origin')
         if origin and origin != str(request.base_url).rstrip('/'):
-            return Response('Cross-origin requests refused',status_code=403)
+            return reject('Cross-origin requests refused',403)
         try:
             size=int(request.headers.get('content-length','0'))
             if size<0: raise ValueError()
         except ValueError:
-            return Response('Invalid content length',status_code=400)
-        if size>4096: return Response('Request too large',status_code=413)
+            return reject('Invalid content length',400)
+        if size>4096: return reject('Request too large',413)
         body=bytearray()
         async for chunk in request.stream():
             body.extend(chunk)
-            if len(body)>4096: return Response('Request too large',status_code=413)
+            if len(body)>4096: return reject('Request too large',413)
         request._body=bytes(body)
     response=await call_next(request)
-    response.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
-    response.headers['X-Content-Type-Options']='nosniff'
-    response.headers['Cache-Control']='no-store'
+    for name,value in SECURITY_HEADERS.items(): response.headers[name]=value
     return response
 
 @app.get('/')

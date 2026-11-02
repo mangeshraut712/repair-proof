@@ -45,6 +45,16 @@ class AppTests(unittest.TestCase):
   self.assertIn('class="mode-option is-disabled" id="live-label"',page)
   self.assertIn('.mode-option.is-disabled',style)
   self.assertIn('@media(max-width:430px){fieldset{grid-template-columns:1fr}',style)
+ def test_decision_rail_separates_historical_and_current_execution(self):
+  from pathlib import Path
+  root=Path(__file__).resolve().parents[1]
+  page=(root/'web'/'index.html').read_text();script=(root/'web'/'app.js').read_text();style=(root/'web'/'style.css').read_text()
+  self.assertIn('id="decision-rail"',page)
+  self.assertIn('CURRENT EXECUTION',page)
+  self.assertIn('BLOCKED — NOT EXECUTED',script)
+  self.assertIn('UNAVAILABLE — NOT RUN',script)
+  self.assertIn('Historical Docker result',script)
+  self.assertIn('.decision-steps',style)
  def test_browser_qa_keeps_recorded_fixture_available_after_capability_reload(self):
   from pathlib import Path
   qa=(Path(__file__).resolve().parents[1]/'scripts'/'browser_qa.py').read_text()
@@ -67,6 +77,19 @@ class AppTests(unittest.TestCase):
  def test_chunked_body_limit(self):
   r=self.client.post('/api/preview',content=iter([b'x'*4097]),headers={'content-type':'application/json'})
   self.assertEqual(r.status_code,413)
+ def test_early_security_rejections_are_safe_json_with_security_headers(self):
+  cases=[
+   (self.client.post('/api/preview',headers={'content-length':'nonsense'},content='{}'),400,'Invalid content length'),
+   (self.client.post('/api/preview',json={},headers={'origin':'https://evil.example'}),403,'Cross-origin requests refused'),
+   (self.client.post('/api/preview',content=iter([b'x'*4097]),headers={'content-type':'application/json'}),413,'Request too large'),
+  ]
+  for response,status,detail in cases:
+   with self.subTest(status=status):
+    self.assertEqual(response.status_code,status)
+    self.assertEqual(response.json(),{'detail':detail})
+    self.assertIn("default-src 'self'",response.headers['content-security-policy'])
+    self.assertEqual(response.headers['x-content-type-options'],'nosniff')
+    self.assertEqual(response.headers['cache-control'],'no-store')
  def test_static_security_and_origin(self):
   r=self.client.get('/'); self.assertEqual(r.status_code,200); self.assertIn("default-src 'self'",r.headers['content-security-policy'])
   self.assertEqual(self.client.get('/static/app.js').status_code,200)

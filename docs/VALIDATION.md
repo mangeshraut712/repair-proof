@@ -3,24 +3,29 @@
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
 it remains undeployed and unsubmitted. This candidate extends public main
-`37bf2dda8d84a5d28c3ec797e5f4d95da0cb6400` and makes browser live inference
-CLI-only, so a browser request cannot bypass the bounded runner's durable
-ledger.
+`df6f5fbe68b812b4d58c332fc989caa9c5952d8b`: browser live inference remains
+CLI-only, and this candidate adds an explicit current-versus-historical review
+rail, normalized early API rejections, and deterministic evaluation-snapshot
+verification.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **67 passed**, 0 failures/errors.
+  `python -m unittest discover -s tests -v`: **70 passed**, 0 failures/errors.
   This is not a fresh Python 3.12 dependency-bootstrap claim.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
-  visible authored holdouts. They remain policy metrics, not model-quality
-  measurements.
+  visible authored holdouts. `python scripts/verify_evaluations.py` rebuilt
+  both published JSON snapshots exactly and required live/semantic/cost fields
+  to remain null. They remain policy metrics, not model-quality measurements.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
-  was recomputed and independently verified at 44 entries through the same
+  was recomputed and independently verified at 46 entries through the same
   standard-library command that CI runs: `python scripts/verify_manifest.py`.
 - No current browser/viewport pass is claimed: the optional Python Playwright
   helper could not run because it is not installed and its previously cached
-  Node Playwright path was absent. No package was installed to fill that gap.
+  Node Playwright path was absent. The helper now asserts the evidence decision
+  rail's recorded/history, unavailable, rejected, and 320px states, but those
+  browser assertions remain unexecuted. No package was installed to fill that
+  gap.
 
 The historical 375×812 real-app check below remains evidence for its named
 source revision only. Historical sections preserve their contemporaneous 35-,
