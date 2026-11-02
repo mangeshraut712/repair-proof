@@ -20,12 +20,13 @@ verification.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
   was recomputed and independently verified at 46 entries through the same
   standard-library command that CI runs: `python scripts/verify_manifest.py`.
-- No current browser/viewport pass is claimed: the optional Python Playwright
-  helper could not run because it is not installed and its previously cached
-  Node Playwright path was absent. The helper now asserts the evidence decision
-  rail's recorded/history, unavailable, rejected, and 320px states, but those
-  browser assertions remain unexecuted. No package was installed to fill that
-  gap.
+- An isolated current-source Chrome run at **320×812** used a disposable profile
+  and loopback-only app. It exercised keyboard tab focus, recorded and authored
+  replay review, an adversarial blocked-execution path, the historical Docker
+  versus current `NOT RUN` rail, packet-link availability, no horizontal
+  overflow, and no external page resources. It made no model call or Docker
+  execution. The optional Python Playwright helper remains unexecuted because
+  Playwright is not installed; no package was installed to fill that gap.
 
 The historical 375×812 real-app check below remains evidence for its named
 source revision only. Historical sections preserve their contemporaneous 35-,
