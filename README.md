@@ -33,6 +33,8 @@ RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0 python -m repair_proof.evaluate
 RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0 python -m repair_proof.evaluate --include-holdouts
 python scripts/verify_evaluations.py
 python scripts/verify_manifest.py
+# Verify a JSON preview packet downloaded from the local app (no network/Docker):
+python scripts/verify_packet.py /path/to/repair-proof-packet.json
 ```
 There are 12 repairable and 8 adversarial fixtures; 4 are marked holdout and excluded by default. These are synthetic, newly authored tests, **not** a benchmark of real-world/model repair quality. Offline evaluation measures policy acceptance/rejection and citation-ID validity only. Missing live/repair metrics remain `null`, never invented. Test mocks validate adapter/container contracts; the separately recorded Docker runs cover only the named authored fixtures in [VALIDATION.md](docs/VALIDATION.md), not general repair quality.
 
@@ -44,6 +46,15 @@ proof of authorship or repair correctness.
 reports and checks their fixture coverage plus intentionally-null live/semantic
 metrics. It proves snapshot consistency only—not provider authenticity,
 benchmark quality, or repair correctness.
+
+`python scripts/verify_packet.py` checks one bounded, regular JSON packet
+against this checked-in fixture corpus. It recomputes evidence, proposal,
+integrity hashes, policy, and the recorded-proof reference when applicable.
+It accepts only unexecuted **Recorded** or **Authored replay** preview packets;
+it fails closed for symlinks, oversized input, altered history, a forged
+current execution result, or unknown fixtures. This is source-release
+consistency evidence—not provider authenticity, fresh execution, or general
+repair correctness.
 
 ## Meta live evaluation — CLI-only
 The browser cannot enable live mode or supply keys, and it refuses live preview
@@ -78,19 +89,20 @@ A true verification requires the original to fail and replacement to pass the sa
 - `meta_client.py`: opt-in Meta-only adapter
 - `patch_policy.py`: independent hash/path/size/AST checks
 - `verifier.py`: optional fail-closed Docker isolation
+- `packet_verifier.py`: offline consistency verification for downloaded review packets
 - `app.py`: API, in-memory review packets, security headers
 - `web/`: dependency-free responsive UI, text-only untrusted rendering
 - `tests/`: unit/API/security contract tests
-- `scripts/browser_qa.py`: optional mocked-API Playwright checks (separate from the recorded-mode local QA documented in `VALIDATION.md`)
+- `scripts/browser_qa.py`, `verify_packet.py`: optional mocked-API browser checks and offline packet verification
 - `docs/`: design, runbook/security, provenance, demo script
 
 ## Status and scope
-New source only, authored 2026-10-27; no ActionsNurse product code imported. The source is publicly published at [mangeshraut712/repair-proof](https://github.com/mangeshraut712/repair-proof), with CI for the offline suite. It is **not deployed** and has **not been submitted** to a hackathon. Current candidate checks recorded in [VALIDATION.md](docs/VALIDATION.md) include 70 offline tests, both authored-replay evaluations plus snapshot verification, manifest verification, JavaScript syntax, and an isolated 320×812 Chrome check of the recorded/replay/rejected review flow; the optional Playwright helper remains unexecuted. These checks do not establish general repair correctness. A private credential exists outside this source tree and is not packaged. One bounded synthetic live batch was completed under separate authorization; actual container verification is recorded only for named authored fixtures, not arbitrary repairs. Hackathon eligibility/submission details must be checked against official current rules before submitting. This build is a bounded Python-fixture demonstrator, not an arbitrary-repository repair bot.
+New source only, authored 2026-10-27; no ActionsNurse product code imported. The source is publicly published at [mangeshraut712/repair-proof](https://github.com/mangeshraut712/repair-proof), with CI for the offline suite. It is **not deployed** and has **not been submitted** to a hackathon. Current candidate checks recorded in [VALIDATION.md](docs/VALIDATION.md) include 81 offline tests, both authored-replay evaluations plus snapshot and packet-consistency verification, manifest verification, JavaScript syntax, and an isolated 320×812 Chrome check of the recorded/replay/rejected review flow; the optional Playwright helper remains unexecuted. These checks do not establish general repair correctness. A private credential exists outside this source tree and is not packaged. One bounded synthetic live batch was completed under separate authorization; actual container verification is recorded only for named authored fixtures, not arbitrary repairs. Hackathon eligibility/submission details must be checked against official current rules before submitting. This build is a bounded Python-fixture demonstrator, not an arbitrary-repository repair bot.
 
 ## Budgeted synthetic live evaluation
 Use the separately approved CLI path, not repeated UI clicks: [LIVE_EVALUATION.md](docs/LIVE_EVALUATION.md). It caps requests at ten, sends no private source, reserves conservative exposure durably before every call, and never automatically retries. The estimated maximum ten-call exposure is $0.511600 under documented tokenizer/provider assumptions—not a provider-enforced billing cap. Existing ledgers cannot be reused. The completed two-fixture batch is documented separately; any further batch requires separate authorization.
 
-Dependency reproducibility: earlier specialized-cloud package pins were invalid and are superseded. The direct pins in `requirements.txt` are the canonical compatibility baseline. The **historical v4** direct-baseline validation passed 49 tests and `pip check`; the prior public release passed 62 offline tests, while the current candidate passed 70 in its existing compatible environment as documented in [VALIDATION.md](docs/VALIDATION.md). The full optional constraints lock has not been freshly reproduced from the current index. See [CLEAN_INSTALL.md](docs/CLEAN_INSTALL.md).
+Dependency reproducibility: earlier specialized-cloud package pins were invalid and are superseded. The direct pins in `requirements.txt` are the canonical compatibility baseline. The **historical v4** direct-baseline validation passed 49 tests and `pip check`; the prior public release passed 62 offline tests, while the current candidate passed 81 in its existing compatible environment as documented in [VALIDATION.md](docs/VALIDATION.md). The full optional constraints lock has not been freshly reproduced from the current index. See [CLEAN_INSTALL.md](docs/CLEAN_INSTALL.md).
 
 ## Repeatable recorded Meta demo — no new API call
 Choose **Recorded Meta proof** with Inclusive total or First position. These are the exact two stored, schema-validated parsed proposals from the prior authorized Meta run—not authored replay and not fresh inference. The UI shows provenance/model/hashes and separates historical Docker proof from current verification (initially NOT RUN). No key is needed. See [RECORDED_MODE.md](docs/RECORDED_MODE.md). Live runner/budget controls and direct-pin/optional-constraint installation caveats are unchanged.

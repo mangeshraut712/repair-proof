@@ -3,22 +3,28 @@
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
 it remains undeployed and unsubmitted. This candidate extends public main
-`df6f5fbe68b812b4d58c332fc989caa9c5952d8b`: browser live inference remains
+`668c97cf86f6c1376440b42a0cbb0beb52d6b920`: browser live inference remains
 CLI-only, and this candidate adds an explicit current-versus-historical review
-rail, normalized early API rejections, and deterministic evaluation-snapshot
-verification.
+rail, normalized early API rejections, deterministic evaluation-snapshot
+verification, and an offline review-packet consistency verifier.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **70 passed**, 0 failures/errors.
+  `python -m unittest discover -s tests -v`: **81 passed**, 0 failures/errors.
   This is not a fresh Python 3.12 dependency-bootstrap claim.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
   visible authored holdouts. `python scripts/verify_evaluations.py` rebuilt
   both published JSON snapshots exactly and required live/semantic/cost fields
   to remain null. They remain policy metrics, not model-quality measurements.
+- `scripts/verify_packet.py` accepted current app-generated Recorded and
+  Authored replay preview packets, and fail-closed on altered replacements,
+  policy verdicts, recorded history, execution state, fixture IDs, symlinks,
+  a post-check path swap, and oversized JSON. Its PASS means consistency with
+  this source release only; it does not re-run Docker or authenticate a
+  provider response.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
-  was recomputed and independently verified at 46 entries through the same
+  was recomputed and independently verified at 49 entries through the same
   standard-library command that CI runs: `python scripts/verify_manifest.py`.
 - An isolated current-source Chrome run at **320×812** used a disposable profile
   and loopback-only app. It exercised keyboard tab focus, recorded and authored

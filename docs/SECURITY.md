@@ -16,6 +16,13 @@ proposal before starting a container, even if a caller already checked policy.
 
 Logs are bounded before sanitation, stripped of ANSI/control characters, assigned stable line IDs and redacted for common tokens/key-value credentials. This is **not comprehensive secret detection**. Only synthetic fixtures are accepted; arbitrary private logs are deliberately unsupported. Meta receives source and sanitized logs, not environment secrets or immutable tests. Credentials are server environment only and never included in prompts/packets/errors. Provider error bodies are not returned or logged.
 
+The separate offline packet verifier accepts one operator-selected local JSON
+path, not a browser/API path. It rejects symlinks and non-regular files, opens
+one identity-checked descriptor with no-follow protection, caps input at 64
+KiB before parsing, makes no network/Docker call, and compares the packet only
+with the checked-in fixture/recorded-proof release. Its PASS result does not
+authenticate the provider response or execute the patch.
+
 ## Verification
 Optional Docker is explicit operator opt-in, pinned to a local image ID, never auto-pulled. Isolated runs use no network, no mounted host paths, no Docker socket, no passed credentials, nonroot UID/GID, read-only root, dropped capabilities, no-new-privileges, memory/CPU/PID limits, bounded tmpfs and wall-clock time. Source/tests are sent as JSON on stdin; fixed trusted runner writes source inside the container and passes the unchanged test contract as a Python argument. Tests execute separately before/after and cannot be replaced by the model. Container cleanup is attempted after failures/timeouts.
 
