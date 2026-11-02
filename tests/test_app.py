@@ -55,6 +55,14 @@ class AppTests(unittest.TestCase):
   self.assertIn('UNAVAILABLE — NOT RUN',script)
   self.assertIn('Historical Docker result',script)
   self.assertIn('.decision-steps',style)
+ def test_download_ui_discloses_unexecuted_packet_checker_scope(self):
+  """A regression catches a download affordance that overpromises verifier scope."""
+  from pathlib import Path
+  root=Path(__file__).resolve().parents[1]
+  page=(root/'web'/'index.html').read_text();script=(root/'web'/'app.js').read_text()
+  self.assertIn('id="packet-checker-note"',page)
+  self.assertIn('packet-checker-note',script)
+  self.assertIn('unexecuted preview',script)
  def test_browser_qa_keeps_recorded_fixture_available_after_capability_reload(self):
   from pathlib import Path
   qa=(Path(__file__).resolve().parents[1]/'scripts'/'browser_qa.py').read_text()

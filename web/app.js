@@ -108,6 +108,10 @@ Proposal SHA-256: ${recorded.proposal_sha256}` : '');
     $('execution-details').hidden = !verification.before && !verification.after;
     setText('execution-record', readable({ before: verification.before || null, after: verification.after || null }));
     setText('metrics', readable({ metrics: packet.metrics || {}, integrity: packet.integrity || {} }));
+    const checkerSupportsPacket = verification.status === 'not_run' && ['recorded', 'replay'].includes(packet.mode);
+    setText('packet-checker-note', checkerSupportsPacket
+      ? 'Offline packet checker supports this unexecuted preview JSON only.'
+      : 'This packet records a current verification attempt. It remains downloadable, but the offline packet checker intentionally supports unexecuted previews only.');
     const id = encodeURIComponent(packet.id);
     $('download-md').href = `/api/packet/${id}?format=markdown`;
     $('download-json').href = `/api/packet/${id}?format=json`;
@@ -121,6 +125,7 @@ Proposal SHA-256: ${recorded.proposal_sha256}` : '');
     state.packet = null;
     $('results').hidden = true; $('empty').hidden = false; $('error').hidden = true;
     $('download-md').removeAttribute('href'); $('download-json').removeAttribute('href');
+    setText('packet-checker-note', 'Offline packet checker accepts unexecuted preview JSON only.');
     badge('source-badge', 'AWAITING CASE', 'neutral');
     status('Selection changed. Review this case to load a new packet; no previous result is shown.');
   }

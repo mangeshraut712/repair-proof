@@ -10,7 +10,7 @@ verification, and an offline review-packet consistency verifier.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **81 passed**, 0 failures/errors.
+  `python -m unittest discover -s tests -v`: **83 passed**, 0 failures/errors.
   This is not a fresh Python 3.12 dependency-bootstrap claim.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
@@ -33,6 +33,13 @@ verification, and an offline review-packet consistency verifier.
   overflow, and no external page resources. It made no model call or Docker
   execution. The optional Python Playwright helper remains unexecuted because
   Playwright is not installed; no package was installed to fill that gap.
+- A second isolated **320×812** loopback Chrome run enabled only the sandbox
+  capability flag, with no image configured. It checked that an unexecuted
+  preview says the offline checker is supported, then clicked the enabled
+  verification control and received `UNAVAILABLE` before any Docker call. The
+  download note changed to state that packets recording a verification attempt
+  remain downloadable but are deliberately outside the offline checker’s
+  scope; live remained disabled and there was no horizontal overflow.
 
 The historical 375×812 real-app check below remains evidence for its named
 source revision only. Historical sections preserve their contemporaneous 35-,

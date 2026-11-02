@@ -101,6 +101,16 @@ class PacketVerifierTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('INVALID:', result.stderr)
 
+    def test_rejects_an_actual_packet_after_a_verification_attempt(self):
+        """A checker PASS must never be read as validation of an execution result."""
+        packet = self.review_packet('replay')
+        response = self.client.post('/api/verify', json={'proposal_id': packet['id']})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['verification']['status'], 'unavailable')
+        result = self.run_verifier(response.json())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('INVALID:', result.stderr)
+
     def test_rejects_an_unregistered_fixture(self):
         """A verifier regression catches a packet that escapes the fixed fixture corpus."""
         packet = copy.deepcopy(self.review_packet('replay'))
