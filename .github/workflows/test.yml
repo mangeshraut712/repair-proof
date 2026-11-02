@@ -39,33 +39,5 @@ jobs:
               raise SystemExit(f"Unexpected holdout evaluation: {observed}")
           print("Holdout evaluation assertions passed.")
           PY
-      - run: |
-          python - <<'PY'
-          import hashlib
-          import json
-          import subprocess
-          from pathlib import Path
-
-          root = Path.cwd().resolve()
-          entries = json.loads((root / "SOURCE_MANIFEST.json").read_text())["files_sha256"]
-          tracked = set(
-              subprocess.run(["git", "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
-          )
-          expected_paths = tracked - {"SOURCE_MANIFEST.json"}
-          manifest_paths = set(entries)
-          if manifest_paths != expected_paths:
-              missing = sorted(expected_paths - manifest_paths)
-              extra = sorted(manifest_paths - expected_paths)
-              raise SystemExit(f"Manifest file-set mismatch; missing={missing}; extra={extra}")
-          mismatches = []
-          for relative, expected in entries.items():
-              candidate = (root / relative).resolve()
-              if not candidate.is_relative_to(root) or not candidate.is_file():
-                  mismatches.append(relative)
-              elif hashlib.sha256(candidate.read_bytes()).hexdigest() != expected:
-                  mismatches.append(relative)
-          if mismatches:
-              raise SystemExit("Manifest mismatches: " + ", ".join(mismatches))
-          print(f"Verified {len(entries)} manifest entries.")
-          PY
+      - run: python scripts/verify_manifest.py
       - run: node --check web/app.js

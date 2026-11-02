@@ -2,21 +2,22 @@
 
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
-it remains undeployed and unsubmitted. This candidate is based on public main
-`a8695543ba1547e5e06b4bf0ef36e0dc112cf703` and makes browser live inference
+it remains undeployed and unsubmitted. This candidate extends public main
+`37bf2dda8d84a5d28c3ec797e5f4d95da0cb6400` and makes browser live inference
 CLI-only, so a browser request cannot bypass the bounded runner's durable
 ledger.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **66 passed**, 0 failures/errors.
+  `python -m unittest discover -s tests -v`: **67 passed**, 0 failures/errors.
   This is not a fresh Python 3.12 dependency-bootstrap claim.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
   visible authored holdouts. They remain policy metrics, not model-quality
   measurements.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
-  was recomputed and independently verified at 42 entries.
+  was recomputed and independently verified at 44 entries through the same
+  standard-library command that CI runs: `python scripts/verify_manifest.py`.
 - No current browser/viewport pass is claimed: the optional Python Playwright
   helper could not run because it is not installed and its previously cached
   Node Playwright path was absent. No package was installed to fill that gap.
