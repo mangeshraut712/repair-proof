@@ -176,7 +176,11 @@ def verify_packet_file(path):
         _fail('Packet file must be a regular file')
     if metadata.st_size <= 0 or metadata.st_size > MAX_PACKET_BYTES:
         _fail('Packet file exceeds the size limit')
-    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0)
+    # A FIFO swapped in after lstat must not block before fstat can reject it.
+    nonblocking = getattr(os, 'O_NONBLOCK', None)
+    if type(nonblocking) is not int or nonblocking == 0:
+        _fail('Safe packet file opening is unavailable')
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | nonblocking
     try:
         descriptor = os.open(path, flags)
     except OSError as error:

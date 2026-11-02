@@ -36,6 +36,24 @@ This is a fresh direct-pin PyPI-install result for Python 3.13.2. It does not
 establish Python 3.12 portability or fresh-install portability of the optional
 full constraints file.
 
+## Hosted Python 3.12 direct-baseline reproduction
+
+The public GitHub Actions [Test run 20](https://github.com/mangeshraut712/repair-proof/actions/runs/41531358721)
+at source revision `ee6fe8a00e5bd87868c6e643ea79bbdb6beec2e0` used a fresh
+`ubuntu-latest` runner with `actions/setup-python` set to Python 3.12. Its
+offline job installed `requirements.txt` with `--no-cache-dir`, then completed:
+
+- `python -m pip check` with no broken requirements;
+- the then-current **84**-test offline suite;
+- evaluation-snapshot and manifest verification; and
+- JavaScript syntax validation.
+
+This is hosted clean-install evidence for the canonical direct baseline on
+Python 3.12. It is separate from the local host, where a Python 3.12
+interpreter was unavailable. It does **not** establish that `requirements.lock`
+installs cleanly or that every future package index will resolve the same
+closure.
+
 ### Git checkout versus source archive
 
 Use a Git checkout for the complete validation command. A `git archive`
@@ -44,7 +62,7 @@ extraction intentionally fails one manifest-related test because
 not an application/runtime failure and does not affect offline replay, but an
 archive alone cannot satisfy the project's full manifest-validation gate.
 
-## Python 3.12 clean-install probe
+## Historical local Python 3.12 constrained-index probe
 
 A fresh probe used the preloaded, digest-pinned Python 3.12 image with only a
 conservative candidate constraints file mounted. No source, credential, or
@@ -54,9 +72,9 @@ index path rejected
 `pydantic==2.8.2` as unavailable. Installation stopped before test execution.
 
 This records that prior controlled probe, not a claim that Pydantic 2.8.2 is
-generally unavailable from PyPI. A prior successful public GitHub Actions run
-installed the direct baseline on Python 3.12; it does not by itself reproduce
-the optional full-lock installation in this local environment.
+generally unavailable from PyPI. The hosted Python 3.12 direct-baseline result
+above supersedes the earlier vague CI reference; neither result reproduces the
+optional full-lock installation in this local environment.
 
 The original full lock also contained future-dated transitive pins unavailable
 from this index. Therefore this environment does **not** establish a fresh,

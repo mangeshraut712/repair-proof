@@ -1,5 +1,6 @@
 import json
 import copy
+import multiprocessing
 import os
 import subprocess
 import sys
@@ -17,6 +18,34 @@ from repair_proof.packet_verifier import PacketVerificationError
 
 ROOT = Path(__file__).resolve().parents[1]
 VERIFY_PACKET = ROOT / 'scripts' / 'verify_packet.py'
+
+
+def _fifo_swap_worker(path, result_pipe):
+    """Swap the checked regular file for a FIFO immediately after lstat."""
+    original = Path(path)
+    real_lstat = os.lstat
+    swapped = False
+
+    def swap_after_check(candidate, *args, **kwargs):
+        nonlocal swapped
+        metadata = real_lstat(candidate, *args, **kwargs)
+        if not swapped and os.fspath(candidate) == os.fspath(original):
+            original.unlink()
+            os.mkfifo(original)
+            swapped = True
+        return metadata
+
+    try:
+        with patch.object(packet_verifier.os, 'lstat', side_effect=swap_after_check):
+            packet_verifier.verify_packet_file(original)
+    except PacketVerificationError as error:
+        result_pipe.send(('rejected', str(error)))
+    except BaseException as error:  # Keep the parent diagnosis deterministic.
+        result_pipe.send(('unexpected', repr(error)))
+    else:
+        result_pipe.send(('accepted', None))
+    finally:
+        result_pipe.close()
 
 
 class PacketVerifierTests(unittest.TestCase):
@@ -165,3 +194,38 @@ class PacketVerifierTests(unittest.TestCase):
             with patch.object(packet_verifier.os, 'lstat', side_effect=swap_after_check):
                 with self.assertRaises(PacketVerificationError):
                     packet_verifier.verify_packet_file(original)
+
+    @unittest.skipUnless(
+        os.name == 'posix' and hasattr(os, 'mkfifo') and 'fork' in multiprocessing.get_all_start_methods(),
+        'requires POSIX FIFOs and fork',
+    )
+    def test_rejects_a_fifo_swapped_in_after_lstat_without_blocking(self):
+        """A regular-file check must not let a path race block on a FIFO open."""
+        with tempfile.TemporaryDirectory() as directory:
+            original = Path(directory) / 'packet.json'
+            original.write_text('{}', encoding='utf-8')
+            context = multiprocessing.get_context('fork')
+            receiver, sender = context.Pipe(duplex=False)
+            process = context.Process(target=_fifo_swap_worker, args=(str(original), sender))
+            process.start()
+            sender.close()
+            process.join(1)
+            if process.is_alive():
+                process.terminate()
+                process.join()
+                self.fail('FIFO swap blocked while opening the packet path')
+            self.assertEqual(process.exitcode, 0)
+            self.assertTrue(receiver.poll())
+            status, detail = receiver.recv()
+            self.assertEqual(status, 'rejected')
+            self.assertEqual(detail, 'Packet file must be a regular file')
+
+    def test_fails_closed_when_nonblocking_open_is_unavailable(self):
+        """A platform without the anti-FIFO flag must not silently risk a block."""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'packet.json'
+            path.write_text('{}', encoding='utf-8')
+            with patch.object(packet_verifier.os, 'O_NONBLOCK', None):
+                with self.assertRaises(PacketVerificationError) as caught:
+                    packet_verifier.verify_packet_file(path)
+        self.assertEqual(str(caught.exception), 'Safe packet file opening is unavailable')

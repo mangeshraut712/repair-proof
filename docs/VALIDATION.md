@@ -10,8 +10,8 @@ verification, and an offline review-packet consistency verifier.
 
 - With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
   existing project-compatible Python **3.13.2** runtime completed
-  `python -m unittest discover -s tests -v`: **84 passed**, 0 failures/errors.
-  This is not a fresh Python 3.12 dependency-bootstrap claim.
+  `python -m unittest discover -s tests -v`: **86 passed**, 0 failures/errors.
+  This local result uses the existing compatible Python 3.13.2 runtime.
 - At `6a58372ffbd184faa6e3b610406a4d78f3a33cc7`, a fresh Git checkout in a
   newly created Python **3.13.2** virtual environment installed the canonical
   direct pins from official PyPI. `pip check`, 83 offline tests, both
@@ -19,6 +19,13 @@ verification, and an offline review-packet consistency verifier.
   49-entry manifest check passed. No local Python 3.12 interpreter was
   available, and the optional full constraints lock remains unproven; see
   `CLEAN_INSTALL.md`.
+- Hosted [GitHub Actions run 20](https://github.com/mangeshraut712/repair-proof/actions/runs/41531358721)
+  independently installed the direct baseline on a fresh Python **3.12**
+  `ubuntu-latest` runner at `ee6fe8a00e5bd87868c6e643ea79bbdb6beec2e0`.
+  Its offline job passed `pip check`, its then-current 84-test suite,
+  evaluation-snapshot verification, manifest verification, and JavaScript
+  syntax. This establishes the direct baseline on hosted Python 3.12, not the
+  optional full constraints lock.
 - Both authored-replay evaluations completed: 10/10 repairable proposals
   accepted and 6/6 unsafe proposals rejected by default; 12/12 and 8/8 with
   visible authored holdouts. `python scripts/verify_evaluations.py` rebuilt
@@ -27,7 +34,8 @@ verification, and an offline review-packet consistency verifier.
 - `scripts/verify_packet.py` accepted current app-generated Recorded and
   Authored replay preview packets, and fail-closed on altered replacements,
   policy verdicts, recorded history, execution state, fixture IDs, symlinks,
-  a post-check path swap, and oversized JSON. Its PASS means consistency with
+  a post-check path swap, a FIFO swapped after `lstat`, a missing required
+  nonblocking-open flag, and oversized JSON. Its PASS means consistency with
   this source release only; it does not re-run Docker or authenticate a
   provider response.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
@@ -114,7 +122,7 @@ phone QA and publication status are summarized above.
 3. Review official hackathon eligibility/rules/assets, then authorize submission separately.
 
 ## Runtime observed
-The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; the fresh direct-pin Python 3.13.2 evidence is recorded above. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
+The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; fresh direct-pin evidence is recorded above for both local Python 3.13.2 and hosted Python 3.12. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
 
 ## Capability UX update
 Added explicit `sandbox_enabled` capability to registry response. Disabled sandbox now disables Verify and displays a preview-only explanation before interaction. Enabled means operator opt-in, not proven runtime availability. API regression test covers both states; optional browser QA covers disabled and enabled branches. TrustedHost allowlist unchanged.
