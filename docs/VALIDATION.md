@@ -2,16 +2,26 @@
 
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
-it remains undeployed and unsubmitted. This candidate extends public main
-`6a58372ffbd184faa6e3b610406a4d78f3a33cc7`: browser live inference remains
-CLI-only, and this candidate adds an explicit current-versus-historical review
-rail, normalized early API rejections, deterministic evaluation-snapshot
-verification, and an offline review-packet consistency verifier.
+it remains undeployed and unsubmitted. The current functionality and validation
+baseline is `b83e62dcf838ca3b9650a11d999ba144349235e7`: browser live inference remains
+CLI-only, and the candidate includes the explicit current-versus-historical
+review rail, normalized early API rejections, deterministic evaluation-snapshot
+verification, an offline review-packet consistency verifier, and a fail-closed
+nonblocking file-open guard for packet paths.
 
-- With `MODEL_API_KEY` removed and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the
-  existing project-compatible Python **3.13.2** runtime completed
+- At `b83e62dcf838ca3b9650a11d999ba144349235e7`, with `MODEL_API_KEY` removed
+  and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the existing
+  project-compatible Python **3.13.2** runtime completed
   `python -m unittest discover -s tests -v`: **86 passed**, 0 failures/errors.
   This local result uses the existing compatible Python 3.13.2 runtime.
+- Hosted [GitHub Actions run 21](https://github.com/mangeshraut712/repair-proof/actions/runs/41534350623)
+  independently installed the canonical direct baseline on a fresh Python
+  **3.12** `ubuntu-latest` runner at
+  `b83e62dcf838ca3b9650a11d999ba144349235e7`. Its offline job passed direct
+  dependency installation, `pip check`, the current offline suite, both
+  evaluation commands plus snapshot verification, manifest verification, and
+  JavaScript syntax. This is clean hosted Python 3.12 evidence for the direct
+  requirements baseline, not the optional full constraints lock.
 - At `6a58372ffbd184faa6e3b610406a4d78f3a33cc7`, a fresh Git checkout in a
   newly created Python **3.13.2** virtual environment installed the canonical
   direct pins from official PyPI. `pip check`, 83 offline tests, both
@@ -119,7 +129,9 @@ phone QA and publication status are summarized above.
 ## Remaining release gates
 1. The optional Python mocked-API browser helper remains unexecuted; do not represent it as a pass. The separate 2026-10-30 real-app loopback browser check is recorded above.
 2. Any further Meta batch requires separate explicit approval; do not reuse the completed ledger or extrapolate from the two recorded fixtures.
-3. Review official hackathon eligibility/rules/assets, then authorize submission separately.
+3. Before the planned submission, recheck official eligibility/rules, the
+   authenticated form's current fields and any unseen declarations, and that
+   the public demo/release accurately represents the intended source revision.
 
 ## Runtime observed
 The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; fresh direct-pin evidence is recorded above for both local Python 3.13.2 and hosted Python 3.12. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
