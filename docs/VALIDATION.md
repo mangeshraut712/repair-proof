@@ -2,25 +2,38 @@
 
 ## Current pre-submission candidate — 2026-11-03
 The reviewed source is public at `https://github.com/mangeshraut712/repair-proof`;
-it remains undeployed and unsubmitted. The current functionality and validation
-baseline is `b83e62dcf838ca3b9650a11d999ba144349235e7`: browser live inference remains
-CLI-only, and the candidate includes the explicit current-versus-historical
-review rail, normalized early API rejections, deterministic evaluation-snapshot
-verification, an offline review-packet consistency verifier, and a fail-closed
-nonblocking file-open guard for packet paths.
+it remains undeployed and unsubmitted. The current pre-submission candidate
+rebases on public implementation commit `a2ad8209d291d48e42944d22df51686d6a8fc081`.
+Browser live inference remains CLI-only, and the candidate includes the
+explicit current-versus-historical review rail, normalized early API
+rejections, deterministic evaluation-snapshot verification, an offline
+review-packet consistency verifier, a fail-closed nonblocking file-open guard
+for packet paths, and multi-packet/directory offline verification. The named
+`b83e62dcf838ca3b9650a11d999ba144349235e7` results below remain historical
+evidence for that exact revision, not the current implementation baseline.
 
-- At `b83e62dcf838ca3b9650a11d999ba144349235e7`, with `MODEL_API_KEY` removed
+- At the current local pre-submission candidate, with `MODEL_API_KEY` removed
   and `RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0`, the existing
   project-compatible Python **3.13.2** runtime completed
   `python -m unittest discover -s tests -v`: **86 passed**, 0 failures/errors.
   This local result uses the existing compatible Python 3.13.2 runtime.
+- Hosted [GitHub Actions run 22](https://github.com/mangeshraut712/repair-proof/actions/runs/41587800659)
+  independently installed the canonical direct baseline on a fresh Python
+  **3.12** `ubuntu-latest` runner at
+  `a2ad8209d291d48e42944d22df51686d6a8fc081`. Its configured offline job
+  passed dependency installation, `pip check`, the offline suite, the
+  evaluation command, verification of both tracked evaluation snapshots,
+  manifest verification, and JavaScript syntax. This is clean hosted Python
+  3.12 evidence for the direct
+  requirements baseline, not the optional full constraints lock.
 - Hosted [GitHub Actions run 21](https://github.com/mangeshraut712/repair-proof/actions/runs/41534350623)
   independently installed the canonical direct baseline on a fresh Python
   **3.12** `ubuntu-latest` runner at
   `b83e62dcf838ca3b9650a11d999ba144349235e7`. Its offline job passed direct
-  dependency installation, `pip check`, the current offline suite, both
-  evaluation commands plus snapshot verification, manifest verification, and
-  JavaScript syntax. This is clean hosted Python 3.12 evidence for the direct
+  dependency installation, `pip check`, the current offline suite, the
+  evaluation command, verification of both tracked evaluation snapshots,
+  manifest verification, and JavaScript syntax. This is clean hosted Python
+  3.12 evidence for the direct
   requirements baseline, not the optional full constraints lock.
 - At `6a58372ffbd184faa6e3b610406a4d78f3a33cc7`, a fresh Git checkout in a
   newly created Python **3.13.2** virtual environment installed the canonical
@@ -49,7 +62,7 @@ nonblocking file-open guard for packet paths.
   this source release only; it does not re-run Docker or authenticate a
   provider response.
 - `node --check web/app.js` and `git diff --check` passed. The source manifest
-  was recomputed and independently verified at 49 entries through the same
+  was recomputed and independently verified at 50 entries through the same
   standard-library command that CI runs: `python scripts/verify_manifest.py`.
 - An isolated current-source Chrome run at **320×812** used a disposable profile
   and loopback-only app. It exercised keyboard tab focus, recorded and authored

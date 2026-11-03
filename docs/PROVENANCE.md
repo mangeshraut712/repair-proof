@@ -1,4 +1,8 @@
 # Provenance ledger
+> Historical build-scope ledger. It records what occurred during the original
+> build; later publication and validation are recorded below and in
+> `docs/VALIDATION.md`.
+
 Build start: 2026-10-27. Workspace: independent `repair-proof/` directory in the cloud computer. No existing ActionsNurse repository source read, copied, imported or modified for this project. All fixtures, tests, UI and backend were newly authored for this task with coding-assistant support. Human review is still required before external submission.
 
 No repository publication, deployment, account creation, credential generation, payment, live model request, Docker execution or Mac use occurred during this build. Dependency libraries preinstalled in the cloud were used for tests. Synthetic fixture logs/replay replacements are explicit authored examples, not captured live output.
