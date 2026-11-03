@@ -3,7 +3,7 @@
   "authored_date": "2026-10-27",
   "files_sha256": {
     ".env.example": "a3fd64ff2fdb4a36f1bd904b09beac1d65531fd08405a0259a208c73eeed15b9",
-    ".github/workflows/test.yml": "b7600bbb4009e7fb00bd7ed65dbb91e9fcdb8df08f1756a72073e2a8fc6af8eb",
+    ".github/workflows/test.yml": "8a3864cd801ffb05c54c780e0ee58c39d8c37dc3b0a56f3055df3f4a231a9696",
     ".gitignore": "fc90a6b85581b57c5a250e4c04365acf056a55a4a60585c92488853529256775",
     "LICENSE": "44c20c78882f60a18c4955ca897e393d96559fa9be297cb94e8be11167f8f713",
     "README.md": "81f8e9479c2924c520080fdb524d84c0e52720d6f540871c9cec619c7ffbe45e",
@@ -37,7 +37,7 @@
     "scripts/browser_qa.py": "fe1ff1476723dede268fafc41d8cecc36454f65b92524cfdf5f9ee798dc5f556",
     "scripts/verify_evaluations.py": "9fefbe1dc31d8042d9d006b3dfd1faa3f6ac5465576e10e0cab3196c4ee3b313",
     "scripts/verify_manifest.py": "973373cf70ae527aa6444ee76400b191e56635dda1c4b7cf4a6d5eb05416ed41",
-    "scripts/verify_packet.py": "76ba58a47fb39b718b21323fda28aa9afeb06744ba8c0c84d5d4c5a3d3bb81c1",
+    "scripts/verify_packet.py": "875f53fbbbf13d74efa602d8edb148762ed389d87d1cba81b488b72d8c0973b9",
     "tests/test_adapter.py": "c7fadc339dd90f663f3bd48e31b2992e87be14dfeb1ee7d6a2f5e190a8af59e1",
     "tests/test_app.py": "85a488960e0c7ba845d9344f77e8571340769f630aceebe8e7274b05532bb4ac",
     "tests/test_core.py": "6b470d4e6e0d6a6680055f109938137cd99b39debb3a43bd2555400c6a517858",
