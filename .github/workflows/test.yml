@@ -25,4 +25,6 @@ jobs:
       - run: RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0 python -m repair_proof.evaluate
       - run: python scripts/verify_evaluations.py
       - run: python scripts/verify_manifest.py
+      - run: python -m py_compile repair_proof/packet_verifier.py scripts/verify_packet.py
       - run: node --check web/app.js
+      - run: git diff --check

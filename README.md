@@ -1,12 +1,27 @@
 # Repair Proof
-**A repair proposal is not proof.** A standalone, review-first Meta AI hackathon prototype that shows the distinction.
+**A repair proposal is not proof.** An independent, review-first prototype that shows the distinction. Repair Proof is not affiliated with or endorsed by Meta.
 
 Choose an authored failing fixture → inspect redacted evidence → review an evidence-linked repair → independently validate the patch → optionally verify before/after in an isolated container → download the review packet.
 
 ## Judge quick start — no key and no model call
-[Watch the 80.5-second narrated recorded-evidence demo](https://github.com/mangeshraut712/repair-proof/releases/tag/v0.1.0-recorded-evidence-demo). It uses two prior, separately authorized Meta proposals for newly authored synthetic fixtures; the walkthrough is recorded and makes **no fresh API call**.
+[Watch the 80.5-second narrated recorded-evidence demo](https://github.com/mangeshraut712/repair-proof/releases/tag/v0.1.0-recorded-evidence-demo). It documents the earlier reviewed public release, not this candidate's later test count or post-release hardening. It uses two prior, separately authorized Meta proposals for newly authored synthetic fixtures; the walkthrough is recorded and makes **no fresh API call**.
 
 To replay the evidence locally, start the loopback app below, choose **Recorded Meta proof**, then select **Inclusive total** or **First position**. The UI loads the stored parsed proposal, rechecks its policy and hashes, and marks current execution **NOT RUN**. The prior Docker before=1/after=0 record applies only to those named fixtures—not general repair quality.
+
+## Project status and documentation
+
+Supported today: local, single-user offline replay on `127.0.0.1`. There is no
+public deployment or live-service homepage. Public hosting is intentionally
+unsupported until the controls in [DEPLOYMENT.md](docs/DEPLOYMENT.md) are
+designed, implemented, and independently reviewed.
+
+- [Design and architecture](docs/DESIGN.md)
+- [Security boundaries and sandbox limits](docs/SECURITY.md)
+- [Clean-install evidence and dependency limits](docs/CLEAN_INSTALL.md)
+- [Recorded mode and provenance](docs/RECORDED_MODE.md)
+- [Validation record](docs/VALIDATION.md)
+- [Recorded-demo walkthrough](docs/DEMO.md)
+- [MIT License](LICENSE)
 
 ## Run locally (offline replay)
 Python **3.12** is recommended. `requirements.txt` is the canonical direct
@@ -18,6 +33,11 @@ python -m pip --isolated install --index-url https://pypi.org/simple --no-cache-
 RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0 python -m uvicorn repair_proof.app:app --host 127.0.0.1 --port 8000
 ```
 Open http://127.0.0.1:8000. Installing dependencies requires package access; replay itself makes no outbound request. This is a **loopback-only single-user prototype**, not a production hosted service. Do not expose it publicly. Packets live in memory, maximum 200, and expire on restart.
+
+Recorded and Authored replay modes need no environment variable or credential.
+`.env.example` is a documentation template; it is not automatically loaded.
+`MODEL_API_KEY` is for the separately authorized CLI-only live runner and is
+never read by the browser.
 
 `requirements.lock` is an optional conservative constraints file, not a
 fresh-install portability guarantee. One prior controlled Python 3.12 probe's
@@ -99,7 +119,12 @@ A true verification requires the original to fail and replacement to pass the sa
 - `docs/`: design, runbook/security, provenance, demo script
 
 ## Status and scope
-New source only, authored 2026-10-27; no ActionsNurse product code imported. The source is publicly published at [mangeshraut712/repair-proof](https://github.com/mangeshraut712/repair-proof), with CI for the offline suite. It is **not deployed** and has **not been submitted** to a hackathon. Current candidate checks recorded in [VALIDATION.md](docs/VALIDATION.md) include 86 offline tests, both authored-replay evaluations plus snapshot and packet-consistency verification, manifest verification, JavaScript syntax, and isolated 320×812 Chrome checks of the recorded/replay/rejected flow and the packet-checker disclosure; the optional Playwright helper remains unexecuted. These checks do not establish general repair correctness. A private credential exists outside this source tree and is not packaged. One bounded synthetic live batch was completed under separate authorization; actual container verification is recorded only for named authored fixtures, not arbitrary repairs. Hackathon eligibility/submission details must be checked against official current rules before submitting. This build is a bounded Python-fixture demonstrator, not an arbitrary-repository repair bot.
+New source only, authored 2026-10-27; no ActionsNurse product code imported. The source is publicly published at [mangeshraut712/repair-proof](https://github.com/mangeshraut712/repair-proof), with CI for the offline suite. The current pre-submission candidate rebases on public implementation commit `a2ad8209d291d48e42944d22df51686d6a8fc081`; it is **not deployed** and has **not been submitted** to a hackathon. Current candidate checks recorded in [VALIDATION.md](docs/VALIDATION.md) include 86 offline tests, both authored-replay evaluations plus snapshot and packet-consistency verification, manifest verification, JavaScript syntax, and isolated 320×812 Chrome checks of the recorded/replay/rejected flow and the packet-checker disclosure; the optional Playwright helper remains unexecuted. These checks do not establish general repair correctness. No credentials are committed to this source tree. One bounded synthetic live batch was completed under separate authorization; actual container verification is recorded only for named authored fixtures, not arbitrary repairs. Hackathon eligibility/submission details must be checked against official current rules before submitting. This build is a bounded Python-fixture demonstrator, not an arbitrary-repository repair bot.
+
+## License
+
+Repair Proof is released under the [MIT License](LICENSE), copyright 2026
+Mangesh Raut.
 
 ## Budgeted synthetic live evaluation
 Use the separately approved CLI path, not repeated UI clicks: [LIVE_EVALUATION.md](docs/LIVE_EVALUATION.md). It caps requests at ten, sends no private source, reserves conservative exposure durably before every call, and never automatically retries. The estimated maximum ten-call exposure is $0.511600 under documented tokenizer/provider assumptions—not a provider-enforced billing cap. Existing ledgers cannot be reused. The completed two-fixture batch is documented separately; any further batch requires separate authorization.

@@ -1,4 +1,8 @@
-# Three-minute honest demo
+# Recorded demo walkthrough
+This is a suggested walkthrough, not a claim that the event requires an exact
+three-minute video. Keep the recorded-versus-live distinction visible in any
+published edit.
+
 0:00–0:25 — “Repair Proof separates a convincing suggestion from evidence. This is a bounded Python-fixture prototype.” State that the primary walkthrough uses a **recorded prior Meta response**, not a fresh request.
 0:25–1:00 — Select Inclusive total → **Recorded Meta proof** → Preview. Point to synthetic sanitized evidence line IDs, the stored model proposal, and the smallest diff. Say: “No API call is happening now.”
 1:00–1:30 — Show the independent policy: exact path, original hash, bounded edit and restricted Python AST. Policy acceptance is not proof. Explain the immutable authored test hash in the downloadable packet.

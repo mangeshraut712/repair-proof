@@ -1,4 +1,8 @@
 # Provenance ledger
+> Historical build-scope ledger. It records what occurred during the original
+> build; later publication and validation are recorded below and in
+> `docs/VALIDATION.md`.
+
 Build start: 2026-10-27. Workspace: independent `repair-proof/` directory in the cloud computer. No existing ActionsNurse repository source read, copied, imported or modified for this project. All fixtures, tests, UI and backend were newly authored for this task with coding-assistant support. Human review is still required before external submission.
 
 No repository publication, deployment, account creation, credential generation, payment, live model request, Docker execution or Mac use occurred during this build. Dependency libraries preinstalled in the cloud were used for tests. Synthetic fixture logs/replay replacements are explicit authored examples, not captured live output.
@@ -9,12 +13,14 @@ See `docs/VALIDATION.md` for actual commands/results and integration limits. A s
 
 Dependency reproducibility correction: the original preinstalled-runtime lock
 was superseded by the direct compatibility baseline in `requirements.txt`.
-The current package index did not complete a fresh Python 3.12 installation of
-the required Pydantic pin, so the optional constraints file does not claim
-portable clean-install validation. A separate local Python 3.13 project venv
-passed 49 tests and `pip check` using the available compatible dependency
-closure; that historical v4 direct-baseline run passed 49 tests and product
-code remained unchanged. See CLEAN_INSTALL.md.
+One controlled local Python 3.12 probe's configured index path rejected the
+required Pydantic pin; that does not claim Pydantic is unavailable from PyPI.
+The optional constraints file therefore does not claim portable clean-install
+validation. Separately, fresh hosted Python 3.12 CI installed the direct
+baseline and completed its offline gates; see `CLEAN_INSTALL.md` and
+`VALIDATION.md`. A separate local Python 3.13 project venv passed 49 tests and
+`pip check` using the available compatible dependency closure; that historical
+v4 direct-baseline run passed 49 tests and product code remained unchanged.
 
 After the build, one separately authorized bounded synthetic live batch was
 recorded and then semantically checked in the network-disabled verifier. Its
