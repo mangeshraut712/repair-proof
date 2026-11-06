@@ -4,7 +4,7 @@
 Choose an authored failing fixture → inspect redacted evidence → review an evidence-linked repair → independently validate the patch → optionally verify before/after in an isolated container → download the review packet.
 
 ## Judge quick start — no key and no model call
-[Watch the 80.5-second narrated recorded-evidence demo](https://github.com/mangeshraut712/repair-proof/releases/tag/v0.1.0-recorded-evidence-demo). It documents the earlier reviewed public release, not this candidate's later test count or post-release hardening. It uses two prior, separately authorized Meta proposals for newly authored synthetic fixtures; the walkthrough is recorded and makes **no fresh API call**.
+[Watch the 62-second layout-fixed recorded-evidence demo](https://github.com/mangeshraut712/repair-proof/releases/tag/v0.2.0-recorded-evidence-demo). It uses two prior, separately authorized Meta proposals for newly authored synthetic fixtures; the walkthrough is recorded and makes **no fresh API call**. The November 1 release remains preserved as historical media, not this candidate's current demo link.
 
 To replay the evidence locally, start the loopback app below, choose **Recorded Meta proof**, then select **Inclusive total** or **First position**. The UI loads the stored parsed proposal, rechecks its policy and hashes, and marks current execution **NOT RUN**. The prior Docker before=1/after=0 record applies only to those named fixtures—not general repair quality.
 
@@ -24,10 +24,12 @@ designed, implemented, and independently reviewed.
 - [MIT License](LICENSE)
 
 ## Run locally (offline replay)
-Python **3.12** is recommended. `requirements.txt` is the canonical direct
+Python **3.12** is recommended; use a compatible Python **3.12 or later**
+interpreter selected as `python3`. `requirements.txt` is the canonical direct
 compatibility baseline; from this directory:
 ```sh
-python3.12 -m venv .venv
+python3 -c 'import sys; assert sys.version_info >= (3, 12), sys.version'
+python3 -m venv .venv
 . .venv/bin/activate
 python -m pip --isolated install --index-url https://pypi.org/simple --no-cache-dir -r requirements.txt
 RP_ENABLE_LIVE=0 RP_ENABLE_SANDBOX=0 python -m uvicorn repair_proof.app:app --host 127.0.0.1 --port 8000
