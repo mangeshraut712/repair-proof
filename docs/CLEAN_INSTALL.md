@@ -10,10 +10,21 @@ python3 -m venv .venv
 python -m pip --isolated install --index-url https://pypi.org/simple --no-cache-dir -r requirements.txt
 ```
 
-Its direct pins are FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and
+Its direct pins are FastAPI 0.162.2, httpx 0.28.1, Pydantic 2.14.3, and
 Uvicorn 0.30.6. Python 3.12 is recommended for a clean reproduction; the
 fresh local evidence below is for Python 3.13.2 only because no Python 3.12
 interpreter was available on that host.
+
+## Security baseline update — 2026-11-10
+
+FastAPI 0.112.0 pinned Starlette 0.37.2, which `pip-audit` flags with
+eight published advisories (PYSEC-2026-161, -248, -249, -1941, -1942,
+-1943, -2280, -2281; the newest fixes land in Starlette 1.3.1). The direct
+pins moved to FastAPI 0.162.2 and Pydantic 2.14.3, which resolve Starlette
+1.10.0. On local Python 3.13.5 from `https://pypi.org/simple` (CI runs 3.12): `pip check` clean,
+`pip-audit -r requirements.txt` clean, 86 offline tests passed, and both
+evaluation snapshots verified unchanged. The sections below are the earlier
+2026-10-27 records and name the versions that were current then.
 
 ## Fresh direct-baseline reproduction (Python 3.13.2)
 

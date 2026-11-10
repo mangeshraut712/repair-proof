@@ -147,7 +147,7 @@ phone QA and publication status are summarized above.
    the public demo/release accurately represents the intended source revision.
 
 ## Runtime observed
-The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The current canonical direct baseline is FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6; fresh direct-pin evidence is recorded above for both local Python 3.13.2 and hosted Python 3.12. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
+The original cloud baseline was Python 3.12 with FastAPI 0.141.1, httpx 0.28.1, Pydantic 2.13.4, and Uvicorn 0.52.1. Those pins proved non-reproducible in this environment. The canonical direct baseline was FastAPI 0.112.0, httpx 0.28.1, Pydantic 2.8.2, and Uvicorn 0.30.6 until 2026-11-10, when it moved to FastAPI 0.162.2 and Pydantic 2.14.3 to leave Starlette 0.37.2 (see CLEAN_INSTALL.md); fresh direct-pin evidence is recorded above for both local Python 3.13.2 and hosted Python 3.12. The prior local Python 3.12 probe was limited by its configured index path; see CLEAN_INSTALL.md.
 
 ## Capability UX update
 Added explicit `sandbox_enabled` capability to registry response. Disabled sandbox now disables Verify and displays a preview-only explanation before interaction. Enabled means operator opt-in, not proven runtime availability. API regression test covers both states; optional browser QA covers disabled and enabled branches. TrustedHost allowlist unchanged.
