@@ -39,6 +39,8 @@ class CoreTests(unittest.TestCase):
     'rk_live_SYNTHETIC_STRIPE_RESTRICTED_CANARY',
     'rk_test_SYNTHETIC_STRIPE_RESTRICTED_TEST_CANARY',
     'xoxs-SYNTHETIC_SLACK_SESSION_CANARY',
+    'xoxe-SYNTHETIC_SLACK_EXCHANGE_CANARY',
+    'xoxc-SYNTHETIC_SLACK_CONFIG_CANARY',
     'xapp-SYNTHETIC_SLACK_APP_CANARY',
   ):
    with self.subTest(token=token):
