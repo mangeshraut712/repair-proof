@@ -30,6 +30,11 @@ class CoreTests(unittest.TestCase):
     'xoxp-SYNTHETIC_SLACK_USER_CANARY',
     'gsk_abcdefghijklmnopqrstuvwxyzABCDEF0123456789',
     'xai-abcdefghijklmnopqrstuvwxyz0123456789',
+    'sk_live_SYNTHETIC_STRIPE_LIVE_CANARY',
+    'sk_test_SYNTHETIC_STRIPE_TEST_CANARY',
+    'dop_v1_SYNTHETIC_DIGITALOCEAN_CANARY',
+    'pypi-SYNTHETIC_PYPI_CANARY',
+    'sntrys_SYNTHETIC_SENTRY_CANARY',
   ):
    with self.subTest(token=token):
     lines=evidence('token '+token)
