@@ -17,6 +17,20 @@ class CoreTests(unittest.TestCase):
     lines=evidence('token '+token)
     self.assertNotIn(token,str(lines))
     self.assertIn('[REDACTED]',lines[0]['text'])
+
+ def test_redacts_common_ci_token_prefixes(self):
+  # Bare tokens that appear in CI logs without a "key=" label.
+  for token in (
+    'AKIAIOSFODNN7EXAMPLE',
+    'npm_abcdefghijklmnopqrstuvwxyz0123456789abcd',
+    'hf_abcdefghijklmnopqrstuvwxyz012345',
+    'glpat-abcdefghijklmnopqrstuv',
+    'AIzaSyA-abcdefghijklmnopqrstuvwxyz0123',
+  ):
+   with self.subTest(token=token):
+    lines=evidence('token '+token)
+    self.assertNotIn(token,str(lines))
+    self.assertIn('[REDACTED]',lines[0]['text'])
  def test_clean_patch(self):
   self.assertTrue(validate('def solve(x):\n    return x + 1\n',self.proposal(),{'L001'})['accepted'])
  def test_paths_hash_and_code_rejected(self):
