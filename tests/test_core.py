@@ -66,6 +66,32 @@ class CoreTests(unittest.TestCase):
     self.assertNotIn(url, str(lines))
     self.assertIn('[REDACTED]', lines[0]['text'])
     self.assertIn('posted to', lines[0]['text'])
+ def test_redacts_quoted_and_authorization_values(self):
+  # Inert markers cover ordinary JSON, shell, and HTTP log representations.
+  cases = (
+    ('{"api_key":"SYNTHETIC_JSON_CANARY"}', 'SYNTHETIC_JSON_CANARY'),
+    ("{'client_secret': 'SYNTHETIC_SINGLE_CANARY'}", 'SYNTHETIC_SINGLE_CANARY'),
+    ('password="SYNTHETIC_PREFIX secret suffix"', 'suffix'),
+    ('password="SYNTHETIC_ESCAPED \\"quoted\\" tail"', 'tail'),
+    ('password="SYNTHETIC_TRUNCATED suffix', 'suffix'),
+    ('Bearer "SYNTHETIC_BEARER suffix"', 'suffix'),
+    ('Authorization: Basic SYNTHETIC_AUTH_CANARY', 'SYNTHETIC_AUTH_CANARY'),
+    ('{"Authorization": "Bearer SYNTHETIC_HEADER_CANARY"}', 'SYNTHETIC_HEADER_CANARY'),
+    ('Proxy-Authorization: Basic SYNTHETIC_PROXY_CANARY', 'SYNTHETIC_PROXY_CANARY'),
+  )
+  for raw, marker in cases:
+   with self.subTest(raw=raw):
+    lines=evidence(raw)
+    self.assertNotIn(marker,str(lines))
+    self.assertIn('[REDACTED]',lines[0]['text'])
+
+ def test_redaction_preserves_surrounding_evidence(self):
+  lines=evidence('checkout failed; password="SYNTHETIC_WORDS with spaces"; retry checkout')
+  self.assertEqual(lines,[{'id':'L001','text':'checkout failed; password=[REDACTED]; retry checkout'}])
+  self.assertEqual(evidence('build passed\n3 tests passed'),[
+   {'id':'L001','text':'build passed'}, {'id':'L002','text':'3 tests passed'},
+  ])
+
  def test_clean_patch(self):
   self.assertTrue(validate('def solve(x):\n    return x + 1\n',self.proposal(),{'L001'})['accepted'])
  def test_paths_hash_and_code_rejected(self):
