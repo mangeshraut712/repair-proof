@@ -7,5 +7,5 @@ def evidence(raw: str) -> list[dict[str,str]]:
     raw = re.sub(r'(?i)(bearer\s+)[^\s]+', r'\1[REDACTED]', raw)
     raw = re.sub(r'(?i)((?:[\w-]*(?:key|token|secret|password)[\w-]*)\s*[:=]\s*)[^\s,;]+', r'\1[REDACTED]', raw)
     raw = re.sub(r'https?://[^\s/@]+:[^\s/@]+@', 'https://[REDACTED]@', raw)
-    raw = re.sub(r'\b(?:(?:sk-|gh[pousr]_|github_pat_|npm_|hf_|glpat-|xox[bap]-|gsk_|xai-)[A-Za-z0-9_-]+|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-_]{20,})', '[REDACTED]', raw)
+    raw = re.sub(r'\b(?:(?:sk-|gh[pousr]_|github_pat_|npm_|hf_|glpat-|xox[bap]-|gsk_|xai-|sk_live_|sk_test_|dop_v1_|pypi-|sntrys_)[A-Za-z0-9_-]+|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-_]{20,})', '[REDACTED]', raw)
     return [{'id':f'L{i:03d}','text':''.join(c for c in line if c.isprintable())[:300]} for i,line in enumerate(raw.splitlines()[:80],1)]
