@@ -10,6 +10,13 @@ class CoreTests(unittest.TestCase):
   e=evidence('Authorization: Bearer supersecret\nMODEL_API_KEY=abc123\nhello')
   self.assertNotIn('supersecret',str(e)); self.assertNotIn('abc123',str(e)); self.assertEqual(e[0]['id'],'L001')
   self.assertLessEqual(len(evidence('x\n'*1000)),80)
+
+ def test_redacts_github_oauth_token_prefixes(self):
+  for token in ('ghp_abcdefghijklmnopqrstuvwx','gho_abcdefghijklmnopqrstuvwx','ghu_abcdefghijklmnopqrstuvwx','ghs_abcdefghijklmnopqrstuvwx','ghr_abcdefghijklmnopqrstuvwx','github_pat_abcdefghijklmnopqrstuvwx'):
+   with self.subTest(token=token):
+    lines=evidence('token '+token)
+    self.assertNotIn(token,str(lines))
+    self.assertIn('[REDACTED]',lines[0]['text'])
  def test_clean_patch(self):
   self.assertTrue(validate('def solve(x):\n    return x + 1\n',self.proposal(),{'L001'})['accepted'])
  def test_paths_hash_and_code_rejected(self):
