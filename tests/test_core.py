@@ -45,6 +45,20 @@ class CoreTests(unittest.TestCase):
     lines=evidence('token '+token)
     self.assertNotIn(token,str(lines))
     self.assertIn('[REDACTED]',lines[0]['text'])
+
+ def test_redacts_slack_incoming_webhook_urls(self):
+  urls = (
+    'https://hooks.slack.com/services/T01234567/B01234567/abcdefghijklmnopqrstuvwx',
+    'hooks.slack.com/services/T01234567/B01234567/abcdefghijklmnopqrstuvwx',
+    'http://hooks.slack.com/services/T01234567/B01234567/abcdefghijklmnopqrstuvwx',
+  )
+  for url in urls:
+   with self.subTest(url=url):
+    lines=evidence('posted to '+url)
+    self.assertNotIn('abcdefghijklmnopqrstuvwx', str(lines))
+    self.assertNotIn(url, str(lines))
+    self.assertIn('[REDACTED]', lines[0]['text'])
+    self.assertIn('posted to', lines[0]['text'])
  def test_clean_patch(self):
   self.assertTrue(validate('def solve(x):\n    return x + 1\n',self.proposal(),{'L001'})['accepted'])
  def test_paths_hash_and_code_rejected(self):
