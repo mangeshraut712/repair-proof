@@ -26,6 +26,10 @@ class CoreTests(unittest.TestCase):
     'hf_abcdefghijklmnopqrstuvwxyz012345',
     'glpat-abcdefghijklmnopqrstuv',
     'AIzaSyA-abcdefghijklmnopqrstuvwxyz0123',
+    'xoxb-SYNTHETIC_SLACK_BOT_CANARY',
+    'xoxp-SYNTHETIC_SLACK_USER_CANARY',
+    'gsk_abcdefghijklmnopqrstuvwxyzABCDEF0123456789',
+    'xai-abcdefghijklmnopqrstuvwxyz0123456789',
   ):
    with self.subTest(token=token):
     lines=evidence('token '+token)
