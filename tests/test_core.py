@@ -127,3 +127,9 @@ class CoreTests(unittest.TestCase):
   verdict=validate(source,self.proposal(source=source,replacement='def solve(x, *, flag=1):\n    return x + flag\n'),{'L001'})
   self.assertFalse(verdict['accepted'])
   self.assertIn('Function metadata or nested functions rejected',verdict['reasons'])
+
+ def test_empty_original_source_returns_a_verdict(self):
+  for source in ['','# only a comment\n']:
+   with self.subTest(source=source):
+    verdict=validate(source,self.proposal(source=source),{'L001'})
+    self.assertIsInstance(verdict,dict)

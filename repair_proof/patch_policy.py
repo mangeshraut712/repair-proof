@@ -29,7 +29,8 @@ def validate(source: str, proposal: Proposal, evidence_ids: set[str]) -> dict:
             reasons.append('Only one solve function is allowed')
         functions=[n for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))]
         if len(functions)!=1: reasons.append('Nested or multiple functions rejected')
-        original=ast.parse(source).body[0]
+        original_body=ast.parse(source).body
+        original=original_body[0] if original_body else None
         if functions and isinstance(original,ast.FunctionDef) and ast.dump(functions[0].args)!=ast.dump(original.args):
             reasons.append('Original solve signature must be preserved')
         for node in ast.walk(tree):
