@@ -34,7 +34,7 @@ def validate(source: str, proposal: Proposal, evidence_ids: set[str]) -> dict:
             reasons.append('Original solve signature must be preserved')
         for node in ast.walk(tree):
             if isinstance(node,FORBIDDEN_NODES): reasons.append('Disallowed Python construct: '+type(node).__name__)
-            if isinstance(node,ast.FunctionDef) and (node.name!='solve' or node.decorator_list or node.args.defaults or node.args.kw_defaults): reasons.append('Function metadata or nested functions rejected')
+            if isinstance(node,ast.FunctionDef) and (node.name!='solve' or node.decorator_list or node.args.defaults or any(d is not None for d in node.args.kw_defaults)): reasons.append('Function metadata or nested functions rejected')
             if isinstance(node,ast.Name) and node.id.startswith('_'): reasons.append('Private names rejected')
             if isinstance(node,ast.Attribute) and node.attr not in ALLOWED_METHODS: reasons.append('Attribute is not allowlisted')
             if isinstance(node,ast.Call):

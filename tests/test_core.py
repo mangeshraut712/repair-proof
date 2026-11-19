@@ -116,3 +116,14 @@ class CoreTests(unittest.TestCase):
   verdict=validate('def solve(x):\n    return x + 1\n',self.proposal(replacement='def solve(x):\n    return solve(x)\n'),{'L001'})
   self.assertFalse(verdict['accepted'])
   self.assertIn('Call is not allowlisted',verdict['reasons'])
+
+ def test_keyword_only_argument_without_default_is_allowed(self):
+  source='def solve(x, *, flag):\n    return x\n'
+  verdict=validate(source,self.proposal(source=source,replacement='def solve(x, *, flag):\n    return x + flag\n'),{'L001'})
+  self.assertTrue(verdict['accepted'],verdict['reasons'])
+
+ def test_keyword_only_default_is_rejected(self):
+  source='def solve(x, *, flag):\n    return x\n'
+  verdict=validate(source,self.proposal(source=source,replacement='def solve(x, *, flag=1):\n    return x + flag\n'),{'L001'})
+  self.assertFalse(verdict['accepted'])
+  self.assertIn('Function metadata or nested functions rejected',verdict['reasons'])
