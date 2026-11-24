@@ -7,6 +7,7 @@ repair correctness.
 """
 import json
 import os
+import re
 import stat
 
 from pydantic import ValidationError
@@ -60,11 +61,9 @@ def _replay_proposal(fixture, lines):
 
 
 def _require_packet_id(value):
-    if not isinstance(value, str) or len(value) != 32:
-        _fail('Packet ID is invalid')
-    try:
-        int(value, 16)
-    except ValueError:
+    # The app issues uuid4().hex: exactly 32 lowercase hex digits. int(x, 16)
+    # also accepts '0x', '_', sign and whitespace forms.
+    if not isinstance(value, str) or re.fullmatch(r'[0-9a-f]{32}', value) is None:
         _fail('Packet ID is invalid')
 
 
