@@ -14,7 +14,7 @@ def evidence(raw: str) -> list[dict[str,str]]:
     raw = re.sub(
         r"([\"']?(?:[\w-]*(?:key|token|secret|password)[\w-]*|"
         r"(?:proxy-)?authorization)[\"']?\s*[:=]\s*)"
-        r"(?:(?:Bearer|Basic)\s+)?" + _SECRET_VALUE,
+        r"(?:(?:Bearer|Basic|Token)\s+)?" + _SECRET_VALUE,
         r'\1[REDACTED]', raw, flags=re.IGNORECASE,
     )
     raw = re.sub(r'(bearer\s+)' + _SECRET_VALUE, r'\1[REDACTED]', raw, flags=re.IGNORECASE)
