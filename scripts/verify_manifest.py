@@ -1,4 +1,7 @@
-"""Verify the tracked Repair Proof source set against SOURCE_MANIFEST.json."""
+"""Verify the tracked Repair Proof source set against SOURCE_MANIFEST.json.
+
+Run with --write after changing tracked files to refresh files_sha256.
+"""
 import hashlib
 import json
 import re
@@ -59,11 +62,47 @@ def verify(root: Path) -> int:
   elif hashlib.sha256(source.read_bytes()).hexdigest() != digest:
    failures.append(f'digest mismatch={relative}')
  if failures:
-  raise ManifestError('Manifest verification failed: ' + '; '.join(failures))
+  raise ManifestError(
+   'Manifest verification failed: ' + '; '.join(failures)
+   + '\nIf these changes are intended, run: python scripts/verify_manifest.py --write'
+  )
  return len(entries)
 
 
-def main() -> int:
+def write(root: Path) -> int:
+ """Rewrite files_sha256 from the tracked files, keeping the other manifest fields."""
+ root = root.resolve()
+ path = root / 'SOURCE_MANIFEST.json'
+ try:
+  data = json.loads(path.read_text(encoding='utf-8'))
+ except (OSError, json.JSONDecodeError) as error:
+  raise ManifestError('Unable to read SOURCE_MANIFEST.json.') from error
+ if not isinstance(data, dict):
+  raise ManifestError('SOURCE_MANIFEST.json must contain a JSON object.')
+ entries = {}
+ for relative in sorted(tracked_paths(root) - {'SOURCE_MANIFEST.json'}):
+  source = root / relative
+  if source.is_symlink() or not source.is_file():
+   raise ManifestError(f'Refusing to hash non-regular tracked path: {relative}')
+  entries[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+ data['files_sha256'] = entries
+ path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+ return len(entries)
+
+
+def main(argv: list[str] | None = None) -> int:
+ args = sys.argv[1:] if argv is None else argv
+ if args not in ([], ['--write']):
+  print('usage: verify_manifest.py [--write]', file=sys.stderr)
+  return 2
+ if args == ['--write']:
+  try:
+   count = write(ROOT)
+  except ManifestError as error:
+   print(error, file=sys.stderr)
+   return 1
+  print(f'Wrote {count} manifest entries.')
+  return 0
  try:
   count = verify(ROOT)
  except ManifestError as error:
