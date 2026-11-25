@@ -1,6 +1,11 @@
-"""Verify the tracked Repair Proof source set against SOURCE_MANIFEST.json."""
+"""Verify the tracked Repair Proof source set against SOURCE_MANIFEST.json.
+
+Run with --write after changing tracked files to refresh files_sha256.
+"""
 import hashlib
 import json
+import os
+import tempfile
 import re
 import subprocess
 import sys
@@ -59,11 +64,59 @@ def verify(root: Path) -> int:
   elif hashlib.sha256(source.read_bytes()).hexdigest() != digest:
    failures.append(f'digest mismatch={relative}')
  if failures:
-  raise ManifestError('Manifest verification failed: ' + '; '.join(failures))
+  raise ManifestError(
+   'Manifest verification failed: ' + '; '.join(failures)
+   + '\nIf these changes are intended, run: python scripts/verify_manifest.py --write'
+  )
  return len(entries)
 
 
-def main() -> int:
+def write(root: Path) -> int:
+ """Rewrite files_sha256 from the tracked files, keeping the other manifest fields."""
+ root = root.resolve()
+ path = root / 'SOURCE_MANIFEST.json'
+ if path.is_symlink() or not path.is_file():
+  raise ManifestError('SOURCE_MANIFEST.json must be a regular file, not a symlink.')
+ try:
+  data = json.loads(path.read_text(encoding='utf-8'))
+ except (OSError, json.JSONDecodeError) as error:
+  raise ManifestError('Unable to read SOURCE_MANIFEST.json.') from error
+ if not isinstance(data, dict):
+  raise ManifestError('SOURCE_MANIFEST.json must contain a JSON object.')
+ entries = {}
+ for relative in sorted(tracked_paths(root) - {'SOURCE_MANIFEST.json'}):
+  source = root / relative
+  if source.is_symlink() or not source.is_file():
+   raise ManifestError(f'Refusing to hash non-regular tracked path: {relative}')
+  entries[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+ data['files_sha256'] = entries
+ # Write a sibling temp file and rename it over the manifest, so a failed write
+ # (full disk, interrupt) leaves the previous manifest intact.
+ fd, temp_name = tempfile.mkstemp(dir=root, prefix='.SOURCE_MANIFEST.', suffix='.tmp')
+ try:
+  with os.fdopen(fd, 'w', encoding='utf-8') as handle:
+   handle.write(json.dumps(data, indent=2) + '\n')
+  os.chmod(temp_name, path.stat().st_mode & 0o777)
+  os.replace(temp_name, path)
+ except BaseException:
+  Path(temp_name).unlink(missing_ok=True)
+  raise
+ return len(entries)
+
+
+def main(argv: list[str] | None = None) -> int:
+ args = sys.argv[1:] if argv is None else argv
+ if args not in ([], ['--write']):
+  print('usage: verify_manifest.py [--write]', file=sys.stderr)
+  return 2
+ if args == ['--write']:
+  try:
+   count = write(ROOT)
+  except ManifestError as error:
+   print(error, file=sys.stderr)
+   return 1
+  print(f'Wrote {count} manifest entries.')
+  return 0
  try:
   count = verify(ROOT)
  except ManifestError as error:

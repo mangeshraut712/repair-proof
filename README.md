@@ -65,6 +65,9 @@ There are 12 repairable and 8 adversarial fixtures; 4 are marked holdout and exc
 `python scripts/verify_manifest.py` requires a Git checkout and verifies the
 tracked file set and recorded hashes. It is release-consistency evidence, not
 proof of authorship or repair correctness.
+After an intended change to tracked files (including docs), refresh the hashes
+with `python scripts/verify_manifest.py --write` and commit the updated
+`SOURCE_MANIFEST.json`.
 
 `python scripts/verify_evaluations.py` recomputes both tracked evaluation JSON
 reports and checks their fixture coverage plus intentionally-null live/semantic
