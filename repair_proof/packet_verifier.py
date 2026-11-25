@@ -95,7 +95,7 @@ def verify_packet(packet):
     if not isinstance(packet, dict):
         _fail('Packet must be a JSON object')
     mode = packet.get('mode')
-    if mode not in {'replay', 'recorded'}:
+    if mode not in ('replay', 'recorded'):
         _fail('Only recorded and authored replay packets are supported')
     required = {
         'id', 'fixture', 'mode', 'provenance', 'evidence', 'proposal', 'policy',
@@ -111,6 +111,8 @@ def verify_packet(packet):
     if not isinstance(fixture_data, dict):
         _fail('Packet fixture is invalid')
     fixture_id = fixture_data.get('id')
+    if not isinstance(fixture_id, str):
+        _fail('Packet fixture is not registered')
     fixture = FIXTURES.get(fixture_id)
     if fixture is None:
         _fail('Packet fixture is not registered')
