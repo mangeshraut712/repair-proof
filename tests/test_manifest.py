@@ -71,3 +71,23 @@ class ManifestWriteTests(unittest.TestCase):
 
  def test_unknown_arguments_are_rejected(self):
   self.assertEqual(self.module.main(['--wrte']), 2)
+
+ def test_write_refuses_a_symlinked_manifest(self):
+  outside = self.root / 'outside.json'
+  outside.write_text('{"keep": true}\n', encoding='utf-8')
+  manifest = self.root / 'SOURCE_MANIFEST.json'
+  manifest.unlink()
+  manifest.symlink_to(outside)
+  with self.assertRaises(self.module.ManifestError):
+   self.module.write(self.root)
+  self.assertEqual(outside.read_text(encoding='utf-8'), '{"keep": true}\n')
+
+ def test_failed_write_keeps_the_previous_manifest(self):
+  from unittest import mock
+  manifest = self.root / 'SOURCE_MANIFEST.json'
+  before = manifest.read_text(encoding='utf-8')
+  with mock.patch.object(self.module.os, 'replace', side_effect=OSError('disk full')):
+   with self.assertRaises(OSError):
+    self.module.write(self.root)
+  self.assertEqual(manifest.read_text(encoding='utf-8'), before)
+  self.assertEqual(sorted(p.name for p in self.root.iterdir() if p.name.endswith('.tmp')), [])

@@ -4,6 +4,8 @@ Run with --write after changing tracked files to refresh files_sha256.
 """
 import hashlib
 import json
+import os
+import tempfile
 import re
 import subprocess
 import sys
@@ -73,6 +75,8 @@ def write(root: Path) -> int:
  """Rewrite files_sha256 from the tracked files, keeping the other manifest fields."""
  root = root.resolve()
  path = root / 'SOURCE_MANIFEST.json'
+ if path.is_symlink() or not path.is_file():
+  raise ManifestError('SOURCE_MANIFEST.json must be a regular file, not a symlink.')
  try:
   data = json.loads(path.read_text(encoding='utf-8'))
  except (OSError, json.JSONDecodeError) as error:
@@ -86,7 +90,17 @@ def write(root: Path) -> int:
    raise ManifestError(f'Refusing to hash non-regular tracked path: {relative}')
   entries[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
  data['files_sha256'] = entries
- path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+ # Write a sibling temp file and rename it over the manifest, so a failed write
+ # (full disk, interrupt) leaves the previous manifest intact.
+ fd, temp_name = tempfile.mkstemp(dir=root, prefix='.SOURCE_MANIFEST.', suffix='.tmp')
+ try:
+  with os.fdopen(fd, 'w', encoding='utf-8') as handle:
+   handle.write(json.dumps(data, indent=2) + '\n')
+  os.chmod(temp_name, path.stat().st_mode & 0o777)
+  os.replace(temp_name, path)
+ except BaseException:
+  Path(temp_name).unlink(missing_ok=True)
+  raise
  return len(entries)
 
 
