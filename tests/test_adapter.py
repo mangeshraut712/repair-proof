@@ -47,3 +47,9 @@ class AdapterTests(unittest.TestCase):
  def test_oversized_prompt_refused_before_transport(self):
   def reply(request): self.fail('Oversized prompt was sent')
   with self.assertRaises(ProviderError): MetaClient(enabled=True,key='secret',transport=httpx.MockTransport(reply)).diagnose([], 'x'*25000)
+ def test_oversized_streamed_response_rejected(self):
+  # A valid proposal padded past the 65536-byte streaming cap must still be refused.
+  body={'choices':[{'message':{'content':json.dumps({'diagnosis':'fix','evidence_ids':['L001'],'edits':[{'path':'src/solution.py','original_sha256':'0'*64,'replacement':'def solve(x): return x'}]})}}],'padding':'x'*70000}
+  def reply(request): return httpx.Response(200,json=body)
+  with self.assertRaises(ProviderError) as caught: MetaClient(enabled=True,key='secret',transport=httpx.MockTransport(reply)).diagnose([], 'x')
+  self.assertEqual(str(caught.exception),'Meta request failed or returned invalid structured output. No proposal accepted.')
